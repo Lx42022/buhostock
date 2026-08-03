@@ -132,6 +132,7 @@
     <button class="ctrl" id="prevBtn" title="Anterior" aria-label="Anterior">◀</button>
     <button class="ctrl ctrl--play" id="playBtn" title="Play/Pausa" aria-label="Play/Pausa">⏸</button>
     <button class="ctrl" id="nextBtn" title="Siguiente" aria-label="Siguiente">▶</button>
+    <button class="ctrl" id="vozBtn" title="Voz" style="width:auto;padding:0 16px;">🔇 Sin voz</button>
     <span class="label" id="label"></span>
     <span class="dots" id="dots"></span>
   </div>
@@ -161,6 +162,9 @@
     var idx = 0;
     var playing = true;
     var timer = null;
+    var SPEED = 0.6;   // < 1 = más rápido (misma cifra que el reproductor de la portada)
+    var voz = false;   // narración por voz (Web Speech), desactivada por defecto
+    function urlFor(i) { return SCENES[i].f + "?spd=" + SPEED + (voz ? "&voz=1" : ""); }
 
     // Crear los puntos (dots) de navegación.
     SCENES.forEach(function (s, i) {
@@ -186,13 +190,13 @@
       timer = setTimeout(function () {
         if (idx < SCENES.length - 1) { goTo(idx + 1); }
         else { playing = false; updateUI(); }   // fin: se para
-      }, SCENES[idx].d * 1000);
+      }, SCENES[idx].d * SPEED * 1000);
     }
 
     // Cargar una escena. Al terminar de cargar el iframe, se programa el avance.
     function goTo(i) {
       idx = (i + SCENES.length) % SCENES.length;
-      frame.src = SCENES[idx].f;   // recargar = la animación vuelve a empezar
+      frame.src = urlFor(idx);   // recargar = la animación vuelve a empezar (con velocidad/voz)
       updateUI();
     }
 
@@ -203,12 +207,18 @@
       else {
         playing = true;
         if (idx === SCENES.length - 1) idx = 0;   // si acabó, reiniciar
-        frame.src = SCENES[idx].f;                // recargar para reproducir de nuevo
+        frame.src = urlFor(idx);                  // recargar para reproducir de nuevo
         updateUI();
       }
     });
     document.getElementById("prevBtn").addEventListener("click", function () { goTo(idx - 1); });
     document.getElementById("nextBtn").addEventListener("click", function () { goTo(idx + 1); });
+    document.getElementById("vozBtn").addEventListener("click", function () {
+      voz = !voz;
+      this.textContent = voz ? "🔊 Con voz" : "🔇 Sin voz";
+      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+      goTo(idx);   // recargar para aplicar la voz (clic = gesto de usuario -> audio permitido)
+    });
 
     // ---- Escalar el iframe (1920x1080) para que quepa manteniendo 16:9 ----
     function fitStage() {

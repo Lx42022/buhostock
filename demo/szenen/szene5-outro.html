@@ -56,12 +56,35 @@ document.getElementById("replay").addEventListener("click",reset);
 </body>
 </html>
 
-<!-- Web-Autoplay: solo en la copia web. El original en ver1.1 queda intacto. -->
+<!-- Web control (solo copia web): velocidad (spd) + voz opcional. Original ver1.1 intacto. -->
 <style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
 <script>
   window.addEventListener("load", function () {
+    var q = new URLSearchParams(location.search);
+    var spd = parseFloat(q.get("spd")); if (!(spd > 0)) spd = 1;
+    var voz = q.get("voz") === "1";
+
+    // Velocidad: escalar todos los pasos programados.
+    try { at = function (sec, fn) { timers.push(setTimeout(fn, sec * 1000 * spd)); }; } catch (e) {}
+
+    // Voz: leer cada linea de subtitulo en espanol (Web Speech API, gratis).
+    if (voz && "speechSynthesis" in window) {
+      try {
+        var _origSet = setSubtitle;
+        setSubtitle = function (t) {
+          _origSet(t);
+          try {
+            var u = new SpeechSynthesisUtterance(t);
+            u.lang = "es-ES"; u.rate = 1;
+            var vs = window.speechSynthesis.getVoices() || [];
+            for (var i = 0; i < vs.length; i++) { if (/es[-_]/i.test(vs[i].lang)) { u.voice = vs[i]; break; } }
+            window.speechSynthesis.speak(u);
+          } catch (e) {}
+        };
+      } catch (e) {}
+    }
+
     var b = document.getElementById("startBtn");
-    if (b) { b.click(); }
-    else if (typeof startScene === "function") { startScene(); }
+    if (b) { b.click(); } else if (typeof startScene === "function") { startScene(); }
   });
 </script>

@@ -87,6 +87,30 @@
       </div>
     </section>
 
+    <!-- ============ DEMO INCRUSTADA (autoplay, sin sonido) ============ -->
+    <section class="section" id="ver-demo">
+      <div class="container">
+        <h2 class="section__title center">Míralo funcionando</h2>
+        <p class="section__subtitle center">
+          Una noche del búho, en un minuto. Empieza solo y sin sonido —
+          pulsa <strong>🔇&nbsp;Sin voz</strong> para escuchar la explicación.
+        </p>
+        <div class="embed" id="embedWrap">
+          <div class="embed__stage" id="embedFrameWrap">
+            <iframe id="embedFrame" title="Demo Búho" scrolling="no"></iframe>
+          </div>
+          <div class="embed__controls">
+            <button class="embed__btn" id="embedPrev" aria-label="Escena anterior">◀</button>
+            <button class="embed__btn embed__btn--play" id="embedPlay" aria-label="Play / Pausa">⏸</button>
+            <button class="embed__btn" id="embedNext" aria-label="Escena siguiente">▶</button>
+            <span class="embed__label" id="embedLabel">1/6</span>
+            <button class="embed__btn embed__voz" id="embedVoz">🔇 Sin voz</button>
+            <a class="embed__full" href="demo.html">⛶ Pantalla completa</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ PROBLEMA: visible ≠ vendible ============ -->
     <section class="section section--problem">
       <div class="container narrow">
@@ -385,6 +409,66 @@
     </div>
   </footer>
 
+  <!-- ============ Reproductor incrustado (autoplay mudo, voz opcional) ============ -->
+  <script>
+    // Se define aquí y lo arranca la puerta PIN al desbloquear.
+    window.startBuhoEmbed = function () {
+      var wrap = document.getElementById("embedWrap");
+      if (!wrap || wrap.dataset.started) return;
+      wrap.dataset.started = "1";
+
+      var SPEED = 0.6;   // < 1 = más rápido (una sola cifra para ajustar el ritmo).
+      var SCENES = [
+        { f: "demo/szenen/szene0-intro.html",         d: 9 },
+        { f: "demo/szenen/szene1-catalogo.html",      d: 31 },
+        { f: "demo/szenen/szene2-noche.html",         d: 33 },
+        { f: "demo/szenen/szene3-telegram.html",      d: 31 },
+        { f: "demo/szenen/szene4-antes-despues.html", d: 19 },
+        { f: "demo/szenen/szene5-outro.html",         d: 7 }
+      ];
+      var frame = document.getElementById("embedFrame");
+      var stageWrap = document.getElementById("embedFrameWrap");
+      var playBtn = document.getElementById("embedPlay");
+      var vozBtn = document.getElementById("embedVoz");
+      var label = document.getElementById("embedLabel");
+      var idx = 0, playing = true, voz = false, timer = null;
+
+      function url(i) { return SCENES[i].f + "?spd=" + SPEED + (voz ? "&voz=1" : ""); }
+      function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+      function schedule() {
+        clearTimer();
+        if (!playing) return;
+        timer = setTimeout(function () { go(idx + 1 < SCENES.length ? idx + 1 : 0); }, SCENES[idx].d * SPEED * 1000);
+      }
+      function go(i) { idx = (i + SCENES.length) % SCENES.length; frame.src = url(idx); ui(); }
+      function ui() {
+        if (label) label.textContent = (idx + 1) + "/" + SCENES.length;
+        if (playBtn) playBtn.textContent = playing ? "⏸" : "▶";
+      }
+      frame.addEventListener("load", schedule);
+
+      playBtn.addEventListener("click", function () {
+        if (playing) { playing = false; clearTimer(); } else { playing = true; frame.src = url(idx); }
+        ui();
+      });
+      vozBtn.addEventListener("click", function () {
+        voz = !voz;
+        vozBtn.textContent = voz ? "🔊 Con voz" : "🔇 Sin voz";
+        vozBtn.classList.toggle("on", voz);
+        try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+        frame.src = url(idx);   // recargar aplica la voz (el clic = gesto de usuario -> audio permitido)
+      });
+      document.getElementById("embedPrev").addEventListener("click", function () { go(idx - 1); });
+      document.getElementById("embedNext").addEventListener("click", function () { go(idx + 1); });
+
+      // Escalar el iframe de 1920x1080 al ancho real del contenedor.
+      function fit() { var w = stageWrap.clientWidth; frame.style.transform = "scale(" + (w / 1920) + ")"; }
+      window.addEventListener("resize", fit);
+      fit();
+      go(0);
+    };
+  </script>
+
   <!-- ============ Lógica de la puerta PIN (preview privada) ============ -->
   <script>
     (function () {
@@ -393,8 +477,10 @@
       var gate = document.getElementById("pinGate");
       if (!gate) return;
 
-      // Si ya se validó en esta sesión, quitar la puerta directamente.
-      if (sessionStorage.getItem("buho_ok") === "1") { gate.remove(); return; }
+      function boot() { gate.remove(); if (window.startBuhoEmbed) window.startBuhoEmbed(); }
+
+      // Si ya se validó en esta sesión, quitar la puerta y arrancar el reproductor.
+      if (sessionStorage.getItem("buho_ok") === "1") { boot(); return; }
 
       var form = document.getElementById("pinForm");
       var input = document.getElementById("pinInput");
@@ -416,7 +502,7 @@
         var hash = await sha256Hex(value);
         if (hash === PIN_HASH) {
           sessionStorage.setItem("buho_ok", "1");
-          gate.remove();
+          boot();
         } else {
           error.hidden = false;
           input.value = "";
