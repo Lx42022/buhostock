@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Búho · Demo (2 min)</title>
+  <link rel="icon" href="demo/logos/buho-icon.svg" />
+  <style>
+    :root {
+      --night-1: #0b0d2b; --night-2: #14163f; --amber: #ffc93c;
+      --amber-2: #f5b301; --cream: #f5f3ec; --muted: #9aa0d0;
+      --border: rgba(154, 160, 208, 0.28);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--night-1); color: var(--cream);
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      overflow: hidden;
+    }
+    body { display: flex; flex-direction: column; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---- Barra superior ---- */
+    .topbar {
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      background: var(--night-2);
+    }
+    .topbar__brand { display: flex; align-items: center; gap: 10px; margin: 0 auto 0 4px; }
+    .topbar__brand img { height: 30px; }
+    .topbar__tag { color: var(--muted); font-size: 0.9rem; }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border);
+      font-size: 0.9rem; color: var(--cream); background: rgba(255,255,255,.03);
+    }
+    .back:hover { background: rgba(255,255,255,.08); }
+
+    /* ---- Escenario (mantiene 16:9 y escala el iframe de 1080p) ---- */
+    .stage-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 18px; min-height: 0; }
+    .stage {
+      position: relative; overflow: hidden; border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.55); border: 1px solid var(--border);
+      background: var(--night-1);
+    }
+    /* El iframe se renderiza SIEMPRE a 1920x1080 y se escala en bloque -> nitidez perfecta */
+    #frame {
+      position: absolute; top: 0; left: 0;
+      width: 1920px; height: 1080px; border: 0;
+      transform-origin: top left;
+    }
+
+    /* ---- Controles ---- */
+    .controls {
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      padding: 14px 20px 18px; flex-wrap: wrap;
+    }
+    .ctrl {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,.05); border: 1px solid var(--border);
+      color: var(--cream); font-size: 1.1rem; cursor: pointer;
+    }
+    .ctrl:hover { background: rgba(255,255,255,.1); }
+    .ctrl--play { width: 54px; height: 54px; font-size: 1.3rem;
+      background: linear-gradient(180deg, var(--amber), var(--amber-2));
+      color: var(--night-1); border: none; box-shadow: 0 10px 26px rgba(255,201,60,.32); }
+    .label { min-width: 220px; text-align: center; font-size: 0.95rem; }
+    .label b { color: var(--amber); }
+    .dots { display: flex; gap: 8px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(154,160,208,.35);
+      cursor: pointer; border: none; padding: 0; }
+    .dot.on { background: var(--amber); transform: scale(1.15); }
+
+    /* ---- Puerta PIN ---- */
+    .pin-gate { position: fixed; inset: 0; z-index: 9999; background: var(--night-1);
+      display: flex; align-items: center; justify-content: center; padding: 22px; }
+    .pin-gate__box { background: var(--night-2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 38px 30px; max-width: 360px; width: 100%; text-align: center; }
+    .pin-gate__owl { width: 64px; height: 64px; margin: 0 auto 10px; display: block; }
+    .pin-gate h1 { font-size: 1.4rem; margin-bottom: 6px; }
+    .pin-gate p { color: var(--muted); margin-bottom: 18px; }
+    .pin-gate form { display: flex; flex-direction: column; gap: 12px; }
+    .pin-gate input { padding: 13px 16px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--night-1); color: var(--cream); font-size: 1.05rem; text-align: center;
+      letter-spacing: 0.12em; outline: none; }
+    .pin-gate input:focus { border-color: var(--amber); }
+    .pin-gate button { padding: 13px 22px; border-radius: 999px; border: none;
+      background: var(--amber); color: var(--night-1); font-weight: 700; font-size: 1rem; cursor: pointer; }
+    .pin-gate__error { color: #ff8080; font-size: 0.9rem; margin: 4px 0 0; }
+
+    @media (max-width: 620px) { .label { min-width: 0; width: 100%; order: -1; } }
+  </style>
+</head>
+<body>
+
+  <!-- ============ PUERTA DE ACCESO (PIN) ============ -->
+  <div class="pin-gate" id="pinGate">
+    <div class="pin-gate__box">
+      <img class="pin-gate__owl" src="demo/logos/buho-icon.svg" alt="" />
+      <h1>Acceso privado</h1>
+      <p>Introduce el PIN para ver la demo.</p>
+      <form id="pinForm" autocomplete="off">
+        <input type="password" id="pinInput" name="pin" placeholder="PIN"
+               autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="PIN de acceso" />
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="pin-gate__error" id="pinError" hidden>PIN incorrecto</p>
+    </div>
+  </div>
+
+  <!-- ============ BARRA SUPERIOR ============ -->
+  <header class="topbar">
+    <a class="back" href="index.html">← Volver a la web</a>
+    <span class="topbar__brand">
+      <img src="demo/logos/buho-lockup.svg" alt="Búho / BuhoStock" />
+    </span>
+    <span class="topbar__tag">Demo · 2 min</span>
+  </header>
+
+  <!-- ============ ESCENARIO ============ -->
+  <div class="stage-wrap" id="stageWrap">
+    <div class="stage" id="stage">
+      <iframe id="frame" title="Demo Búho" scrolling="no"></iframe>
+    </div>
+  </div>
+
+  <!-- ============ CONTROLES ============ -->
+  <div class="controls">
+    <button class="ctrl" id="prevBtn" title="Anterior" aria-label="Anterior">◀</button>
+    <button class="ctrl ctrl--play" id="playBtn" title="Play/Pausa" aria-label="Play/Pausa">⏸</button>
+    <button class="ctrl" id="nextBtn" title="Siguiente" aria-label="Siguiente">▶</button>
+    <span class="label" id="label"></span>
+    <span class="dots" id="dots"></span>
+  </div>
+
+  <script>
+    /* ---------------------------------------------------------------------
+       Reproductor de la demo: encadena las 6 escenas HTML como si fuera un
+       vídeo. Cada escena arranca sola (autoplay inyectado) y avanzamos con
+       un temporizador según su duración aproximada.
+       --------------------------------------------------------------------- */
+    var SCENES = [
+      { f: "demo/szenen/szene0-intro.html",         d: 9,  n: "Intro" },
+      { f: "demo/szenen/szene1-catalogo.html",      d: 31, n: "Tu catálogo" },
+      { f: "demo/szenen/szene2-noche.html",         d: 33, n: "El búho de noche" },
+      { f: "demo/szenen/szene3-telegram.html",      d: 31, n: "Informe cada mañana" },
+      { f: "demo/szenen/szene4-antes-despues.html", d: 19, n: "Antes / Después" },
+      { f: "demo/szenen/szene5-outro.html",         d: 7,  n: "¿Hablamos?" }
+    ];
+
+    var frame = document.getElementById("frame");
+    var label = document.getElementById("label");
+    var dotsEl = document.getElementById("dots");
+    var playBtn = document.getElementById("playBtn");
+    var stage = document.getElementById("stage");
+    var stageWrap = document.getElementById("stageWrap");
+
+    var idx = 0;
+    var playing = true;
+    var timer = null;
+
+    // Crear los puntos (dots) de navegación.
+    SCENES.forEach(function (s, i) {
+      var b = document.createElement("button");
+      b.className = "dot"; b.title = s.n;
+      b.addEventListener("click", function () { goTo(i); });
+      dotsEl.appendChild(b);
+    });
+
+    function updateUI() {
+      label.innerHTML = "Escena <b>" + (idx + 1) + "/" + SCENES.length + "</b> · " + SCENES[idx].n;
+      var dots = dotsEl.children;
+      for (var i = 0; i < dots.length; i++) dots[i].className = "dot" + (i === idx ? " on" : "");
+      playBtn.textContent = playing ? "⏸" : "▶";
+    }
+
+    function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
+
+    // Programar el salto a la siguiente escena (solo si está reproduciendo).
+    function schedule() {
+      clearTimer();
+      if (!playing) return;
+      timer = setTimeout(function () {
+        if (idx < SCENES.length - 1) { goTo(idx + 1); }
+        else { playing = false; updateUI(); }   // fin: se para
+      }, SCENES[idx].d * 1000);
+    }
+
+    // Cargar una escena. Al terminar de cargar el iframe, se programa el avance.
+    function goTo(i) {
+      idx = (i + SCENES.length) % SCENES.length;
+      frame.src = SCENES[idx].f;   // recargar = la animación vuelve a empezar
+      updateUI();
+    }
+
+    frame.addEventListener("load", schedule);
+
+    playBtn.addEventListener("click", function () {
+      if (playing) { playing = false; clearTimer(); updateUI(); }
+      else {
+        playing = true;
+        if (idx === SCENES.length - 1) idx = 0;   // si acabó, reiniciar
+        frame.src = SCENES[idx].f;                // recargar para reproducir de nuevo
+        updateUI();
+      }
+    });
+    document.getElementById("prevBtn").addEventListener("click", function () { goTo(idx - 1); });
+    document.getElementById("nextBtn").addEventListener("click", function () { goTo(idx + 1); });
+
+    // ---- Escalar el iframe (1920x1080) para que quepa manteniendo 16:9 ----
+    function fitStage() {
+      var availW = stageWrap.clientWidth - 36;   // menos el padding
+      var availH = stageWrap.clientHeight - 36;
+      var w = Math.min(availW, availH * 16 / 9);
+      if (w < 200) w = 200;
+      var h = w * 9 / 16;
+      stage.style.width = w + "px";
+      stage.style.height = h + "px";
+      frame.style.transform = "scale(" + (w / 1920) + ")";
+    }
+    window.addEventListener("resize", fitStage);
+
+    // ---- Puerta PIN (mismo esquema que la web principal) ----
+    (function () {
+      var PIN_HASH = "6c6c00864e63d19e332ab546eb6e35826fa5fd161915d10637b716640c24c868";
+      var gate = document.getElementById("pinGate");
+      function boot() { fitStage(); goTo(0); }   // arrancar el reproductor
+      if (sessionStorage.getItem("buho_ok") === "1") { gate.remove(); boot(); return; }
+      var form = document.getElementById("pinForm");
+      var input = document.getElementById("pinInput");
+      var error = document.getElementById("pinError");
+      async function sha256Hex(text) {
+        var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+        return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+      }
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var hash = await sha256Hex((input.value || "").trim().toUpperCase());
+        if (hash === PIN_HASH) { sessionStorage.setItem("buho_ok", "1"); gate.remove(); boot(); }
+        else { error.hidden = false; input.value = ""; input.focus(); }
+      });
+      input.focus();
+    })();
+  </script>
+</body>
+</html>

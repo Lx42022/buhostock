@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Búho — Escena 3: Informe por Telegram</title>
+<link rel="stylesheet" href="_estilo.css">
+<style>
+  /* Scene 3: a phone with a Telegram morning report. ~30s. */
+  .phone{width:400px;height:min(760px,82vh);background:#0e1621;border-radius:40px;border:8px solid #05070f;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);overflow:hidden;display:flex;flex-direction:column;
+    opacity:0;transform:translateY(24px) scale(.98);transition:opacity .7s ease,transform .7s ease;}
+  .phone.in{opacity:1;transform:none;}
+  .tg-header{background:#17212b;padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #0b1218;}
+  .tg-header img{width:42px;height:42px;border-radius:50%;}
+  .tg-header .h-name{font-weight:700;font-size:18px;color:#fff;}
+  .tg-header .h-sub{font-size:13px;color:#5aa0e0;}
+  .tg-body{flex:1;background:#0e1621;padding:18px 14px;position:relative;
+    background-image:radial-gradient(circle at 20% 30%, rgba(124,156,255,.05), transparent 40%);}
+  .tg-day{text-align:center;margin-bottom:16px;}
+  .tg-day span{background:#1b2735;color:#8aa0b3;font-size:12px;padding:4px 12px;border-radius:12px;}
+  .typing{display:inline-flex;gap:5px;align-items:center;background:#182533;padding:14px 18px;border-radius:16px;
+    border-bottom-left-radius:5px;opacity:0;transition:opacity .3s;}
+  .typing.in{opacity:1;}
+  .typing i{width:8px;height:8px;border-radius:50%;background:#6c7883;animation:blink 1.2s infinite;}
+  .typing i:nth-child(2){animation-delay:.2s} .typing i:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+  .bubble{background:#182533;color:#e7eef5;border-radius:16px;border-bottom-left-radius:5px;padding:15px 17px;
+    max-width:90%;font-size:16px;line-height:1.55;white-space:pre-line;box-shadow:0 2px 6px rgba(0,0,0,.3);
+    opacity:0;transform:scale(.7);transform-origin:left bottom;}
+  .bubble.in{animation:pop .5s ease forwards;}
+  .bubble .time{display:block;text-align:right;font-size:11px;color:#6c7883;margin-top:8px;}
+  .hl-line{transition:background .4s ease,box-shadow .4s ease;border-radius:6px;}
+  .hl-line.glow{background:rgba(255,201,60,.18);box-shadow:0 0 0 2px rgba(255,201,60,.4);}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="stars"></div>
+  <div id="brand"><img src="../logos/buho-icon.svg" alt=""><span class="name"><b>Búho</b></span></div>
+
+  <div class="phone">
+    <div class="tg-header">
+      <img src="../logos/buho-icon.svg" alt="">
+      <div><div class="h-name">Búho</div><div class="h-sub">bot</div></div>
+    </div>
+    <div class="tg-body">
+      <div class="tg-day"><span>hoy</span></div>
+      <div class="typing" id="typing"><i></i><i></i><i></i></div>
+      <div class="bubble" id="bubble">🦉 Buenos días. Informe de esta noche:
+
+<span class="hl-line" id="l-vendido">✅ Vendido: 2 artículos (168 €)
+   • Zapatillas Nike T42 — 42 €
+   • Chaqueta Levi's M — 35 €</span>
+
+<span class="hl-line" id="l-ajust">🔽 Precios ajustados: 7 artículos</span>
+<span class="hl-line" id="l-prot">⛔ Sin tocar (precio mínimo): 3
+🐄 Vacas lecheras protegidas: 5</span>
+
+Que tengas buen día ☕<span class="time">08:00</span></div>
+    </div>
+  </div>
+
+  <div id="subtitle"></div>
+  <button id="replay" title="Wiederholen">↻</button>
+  <div id="startScreen">
+    <img class="ss-owl" src="../logos/buho-icon.svg" alt="">
+    <div class="ss-title"><b>Búho</b></div>
+    <div class="ss-sub">Escena 3 · <span>Informe matinal</span></div>
+    <button id="startBtn">▶ Empezar</button>
+    <div class="ss-hint">F11 = Vollbild · mit Win+G aufnehmen · dann „Empezar"</div>
+  </div>
+</div>
+
+<script>
+let timers=[];
+function buildStars(){const b=document.getElementById("stars");let s="";for(let i=0;i<40;i++){const x=Math.random()*100,y=Math.random()*72,d=(Math.random()*3).toFixed(1);s+=`<div class="star" style="left:${x}vw;top:${y}vh;animation-delay:${d}s"></div>`;}b.innerHTML=s;}
+function at(sec,fn){timers.push(setTimeout(fn,sec*1000));}
+function setSubtitle(t){const s=document.getElementById("subtitle");s.classList.remove("show");timers.push(setTimeout(()=>{s.textContent=t;s.classList.add("show");},250));}
+function startScene(){document.getElementById("startScreen").style.display="none";document.getElementById("replay").style.display="flex";run();}
+function reset(){timers.forEach(clearTimeout);timers=[];document.getElementById("subtitle").classList.remove("show");resetScene();run();}
+
+const phone=document.querySelector(".phone"),typing=document.getElementById("typing"),bubble=document.getElementById("bubble");
+function glow(id){document.getElementById(id).classList.add("glow");}
+function initScene(){}
+function resetScene(){
+  phone.classList.remove("in");
+  typing.classList.remove("in");typing.style.display="";
+  bubble.classList.remove("in");
+  ["l-vendido","l-ajust","l-prot"].forEach(id=>document.getElementById(id).classList.remove("glow"));
+}
+function run(){
+  at(0.2,()=>phone.classList.add("in"));
+  at(0.3,()=>setSubtitle("Y cada mañana, un informe en tu móvil."));
+  at(1.6,()=>typing.classList.add("in"));
+  at(3.2,()=>{typing.classList.remove("in");typing.style.display="none";bubble.classList.add("in");});
+  at(6.0,()=>{setSubtitle("Qué se ha vendido esta noche y por cuánto.");glow("l-vendido");});
+  at(12.0,()=>{setSubtitle("Qué precios ha ajustado.");glow("l-ajust");});
+  at(17.5,()=>{setSubtitle("Y qué ha dejado intacto: tu mínimo, tus vacas lecheras.");glow("l-prot");});
+  at(24.0,()=>setSubtitle("Todo, sin que tú hicieras nada."));
+}
+buildStars();initScene();
+document.getElementById("startBtn").addEventListener("click",startScene);
+document.getElementById("replay").addEventListener("click",reset);
+</script>
+</body>
+</html>
+
+<!-- Web-Autoplay: solo en la copia web. El original en ver1.1 queda intacto. -->
+<style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
+<script>
+  window.addEventListener("load", function () {
+    var b = document.getElementById("startBtn");
+    if (b) { b.click(); }
+    else if (typeof startScene === "function") { startScene(); }
+  });
+</script>

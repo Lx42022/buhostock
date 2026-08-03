@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Búho — Escena 2: La noche</title>
+<link rel="stylesheet" href="_estilo.css">
+</head>
+<body>
+<div id="stage">
+  <div id="stars"></div>
+  <div id="brand"><img src="../logos/buho-icon.svg" alt=""><span class="name"><b>Búho</b></span></div>
+  <div id="clock"><span class="moon">🌙</span><span id="clockTime">02:47</span></div>
+
+  <div id="summary">
+    <span class="ok">✅ 4 precios ajustados</span>
+    <span class="pr">🛡️ 3 protegidos</span>
+  </div>
+
+  <div id="flash"></div>
+  <div id="catalog"></div>
+  <div id="subtitle"></div>
+
+  <button id="replay" title="Wiederholen">↻</button>
+  <div id="startScreen">
+    <img class="ss-owl" src="../logos/buho-icon.svg" alt="">
+    <div class="ss-title"><b>Búho</b></div>
+    <div class="ss-sub">Escena 2 · <span>Por la noche</span></div>
+    <button id="startBtn">▶ Empezar</button>
+    <div class="ss-hint">F11 = Vollbild · mit Win+G aufnehmen · dann „Empezar"</div>
+  </div>
+</div>
+
+<script>
+let timers=[];
+function buildStars(){const b=document.getElementById("stars");let s="";for(let i=0;i<40;i++){const x=Math.random()*100,y=Math.random()*72,d=(Math.random()*3).toFixed(1);s+=`<div class="star" style="left:${x}vw;top:${y}vh;animation-delay:${d}s"></div>`;}b.innerHTML=s;}
+function at(sec,fn){timers.push(setTimeout(fn,sec*1000));}
+function setSubtitle(t){const s=document.getElementById("subtitle");s.classList.remove("show");timers.push(setTimeout(()=>{s.textContent=t;s.classList.add("show");},250));}
+function startScene(){document.getElementById("startScreen").style.display="none";document.getElementById("replay").style.display="flex";run();}
+function reset(){timers.forEach(clearTimeout);timers=[];document.getElementById("subtitle").classList.remove("show");resetScene();run();}
+
+/* DATA — illustrative catalog. change = price adjusted; protect = left alone. */
+const data=[
+  {art:"Zapatillas Nike Air Max T42",cur:45.00,min:38.00,vaca:false,dias:12,newPrice:42.00},
+  {art:"iPhone 11 64GB",cur:189.00,min:160.00,vaca:false,dias:23,newPrice:180.00},
+  {art:"Chaqueta Levi's Trucker M",cur:39.00,min:30.00,vaca:false,dias:34},
+  {art:"Reloj Casio G-Shock",cur:65.00,min:55.00,vaca:true,dias:5,protect:"vaca"},
+  {art:"Auriculares Sony WH-1000",cur:89.00,min:70.00,vaca:false,dias:18,newPrice:84.00},
+  {art:"PlayStation 4 Slim",cur:120.00,min:100.00,vaca:false,dias:15,newPrice:114.00},
+  {art:"Camiseta Adidas L",cur:15.00,min:15.00,vaca:false,dias:27,protect:"min"},
+  {art:"Taladro Bosch Professional",cur:95.00,min:80.00,vaca:false,dias:30},
+  {art:"Gafas Ray-Ban Aviator",cur:75.00,min:60.00,vaca:true,dias:3,protect:"vaca"},
+  {art:"Abrigo Zara Mujer S",cur:29.00,min:22.00,vaca:false,dias:20},
+];
+function fmt(n){return n.toFixed(2).replace(".",",")+" €";}
+function buildTable(){
+  let h=`<div class="row head">
+    <div class="cell c-art">Artículo</div><div class="cell c-actual">Precio actual</div>
+    <div class="cell c-min">Precio mínimo</div><div class="cell c-vaca">¿Vaca lechera?</div>
+    <div class="cell c-dias">Días parado</div></div>`;
+  data.forEach((d,i)=>{h+=`<div class="row data" id="row-${i}">
+    <div class="cell c-art">${d.art}</div><div class="cell c-actual">${fmt(d.cur)}</div>
+    <div class="cell c-min">${fmt(d.min)}</div>
+    <div class="cell c-vaca ${d.vaca?"si":"no"}">${d.vaca?"SÍ":"NO"}</div>
+    <div class="cell c-dias">${d.dias}</div></div>`;});
+  document.getElementById("catalog").innerHTML=h;
+}
+function setClock(t){document.getElementById("clockTime").textContent=t;}
+function flash(t,hold=1800){const f=document.getElementById("flash");f.textContent=t;f.classList.add("show");timers.push(setTimeout(()=>f.classList.remove("show"),hold));}
+function changePrice(i){
+  const row=document.getElementById("row-"+i),cell=row.querySelector(".c-actual");
+  row.classList.add("hl");
+  cell.innerHTML=`<span class="oldp">${fmt(data[i].cur)}</span><span class="arr">→</span><span class="newp flash">${fmt(data[i].newPrice)}</span>`;
+  timers.push(setTimeout(()=>row.classList.remove("hl"),1600));
+}
+function protectRow(i,type,label){
+  const row=document.getElementById("row-"+i);
+  row.classList.add(type==="vaca"?"prot-vaca":"prot-min");
+  const badge=document.createElement("div");
+  badge.className="rowbadge "+(type==="vaca"?"b-vaca":"b-min");
+  badge.innerHTML=label;row.appendChild(badge);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>badge.classList.add("show")));
+}
+function initScene(){buildTable();}
+function resetScene(){buildTable();setClock("02:47");document.getElementById("summary").classList.remove("show");document.getElementById("flash").classList.remove("show");}
+function run(){
+  ["02:51","02:55","02:58","03:00"].forEach((t,k)=>at(0.6+k*0.55,()=>setClock(t)));
+  at(0.2,()=>setSubtitle("Por la noche, mientras duermes, el búho se pone a trabajar."));
+  at(3.0,()=>flash("03:00 · el búho se pone a trabajar 🦉",2200));
+  at(5.0,()=>setSubtitle("Ajusta los precios uno a uno, despacio, a su ritmo."));
+  at(5.6,()=>changePrice(0));   /* Nike 45->42 */
+  at(9.0,()=>changePrice(4));   /* Sony 89->84 */
+  at(12.4,()=>changePrice(1));  /* iPhone 189->180 */
+  at(15.8,()=>changePrice(5));  /* PS4 120->114 */
+  at(18.6,()=>setSubtitle("Nunca baja de tu precio mínimo."));
+  at(19.0,()=>protectRow(6,"min","⛔ 15 € = mínimo · no baja"));
+  at(22.6,()=>setSubtitle("Tus vacas lecheras se quedan intactas."));
+  at(23.0,()=>protectRow(3,"vaca","🐄 vaca lechera · intacta"));
+  at(23.9,()=>protectRow(8,"vaca","🐄 vaca lechera · intacta"));
+  at(26.8,()=>setSubtitle("Tú no tocas nada. Él lo hace solo."));
+  at(28.6,()=>document.getElementById("summary").classList.add("show"));
+}
+buildStars();initScene();
+document.getElementById("startBtn").addEventListener("click",startScene);
+document.getElementById("replay").addEventListener("click",reset);
+</script>
+</body>
+</html>
+
+<!-- Web-Autoplay: solo en la copia web. El original en ver1.1 queda intacto. -->
+<style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
+<script>
+  window.addEventListener("load", function () {
+    var b = document.getElementById("startBtn");
+    if (b) { b.click(); }
+    else if (typeof startScene === "function") { startScene(); }
+  });
+</script>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Búho — Escena 4: Antes / Después</title>
+<link rel="stylesheet" href="_estilo.css">
+<style>
+  /* Scene 4: split screen ANTES vs DESPUÉS with a "VENDIDO" stamp. ~18s. */
+  .split{display:flex;gap:30px;align-items:center;}
+  .side{width:360px;display:flex;flex-direction:column;align-items:center;gap:16px;
+    opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease;}
+  .side.in{opacity:1;transform:none;}
+  .side-label{font-size:24px;font-weight:800;letter-spacing:3px;}
+  .antes .side-label{color:var(--muted);} .despues .side-label{color:var(--green);}
+  .card{position:relative;width:100%;background:rgba(20,22,63,.7);border:1px solid rgba(124,156,255,.22);
+    border-radius:20px;padding:26px;display:flex;flex-direction:column;align-items:center;gap:12px;
+    box-shadow:0 24px 60px rgba(0,0,0,.45);}
+  .antes .card{filter:grayscale(.7) brightness(.82);}
+  .ph{width:140px;height:140px;border-radius:16px;background:linear-gradient(135deg,#2a2c6e,#14163f);
+    display:flex;align-items:center;justify-content:center;font-size:64px;}
+  .c-name{font-size:22px;font-weight:700;}
+  .c-status{font-size:17px;padding:6px 14px;border-radius:999px;}
+  .c-status.stuck{background:rgba(154,160,208,.15);color:var(--muted);}
+  .c-status.sold{background:rgba(74,222,128,.15);color:var(--green);}
+  .c-price{font-size:38px;font-weight:800;}
+  .antes .c-price{color:var(--muted);text-decoration:line-through;}
+  .despues .c-price{color:var(--green);}
+  .c-sub{font-size:16px;color:var(--muted);}
+  .stamp{position:absolute;top:22px;right:-8px;transform:rotate(-14deg) scale(0);opacity:0;
+    color:var(--green);border:4px solid var(--green);border-radius:12px;padding:5px 15px;
+    font-size:28px;font-weight:900;letter-spacing:2px;text-shadow:0 0 12px rgba(74,222,128,.4);
+    transition:transform .5s cubic-bezier(.2,.9,.3,1.4),opacity .4s ease;}
+  .stamp.in{transform:rotate(-14deg) scale(1);opacity:1;}
+  .vs{font-size:40px;font-weight:800;color:var(--amber);opacity:0;transition:opacity .6s ease;}
+  .vs.in{opacity:.75;}
+  .ilustrativo{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+    font-size:14px;color:#6d73a8;font-style:italic;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="stars"></div>
+  <div id="brand"><img src="../logos/buho-icon.svg" alt=""><span class="name"><b>Búho</b></span></div>
+
+  <div class="split">
+    <div class="side antes">
+      <div class="side-label">ANTES</div>
+      <div class="card">
+        <div class="ph">🧥</div>
+        <div class="c-name">Chaqueta Levi's M</div>
+        <div class="c-status stuck">⏳ 34 días parado</div>
+        <div class="c-price">89 €</div>
+      </div>
+    </div>
+    <div class="vs">→</div>
+    <div class="side despues">
+      <div class="side-label">DESPUÉS</div>
+      <div class="card">
+        <div class="stamp">VENDIDO</div>
+        <div class="ph">🧥</div>
+        <div class="c-name">Chaqueta Levi's M</div>
+        <div class="c-status sold">✅ Ajustado a 79 €</div>
+        <div class="c-price">79 €</div>
+        <div class="c-sub">vendido en 6 días</div>
+      </div>
+    </div>
+  </div>
+  <div class="ilustrativo">ejemplo ilustrativo</div>
+
+  <div id="subtitle"></div>
+  <button id="replay" title="Wiederholen">↻</button>
+  <div id="startScreen">
+    <img class="ss-owl" src="../logos/buho-icon.svg" alt="">
+    <div class="ss-title"><b>Búho</b></div>
+    <div class="ss-sub">Escena 4 · <span>Antes / Después</span></div>
+    <button id="startBtn">▶ Empezar</button>
+    <div class="ss-hint">F11 = Vollbild · mit Win+G aufnehmen · dann „Empezar"</div>
+  </div>
+</div>
+
+<script>
+let timers=[];
+function buildStars(){const b=document.getElementById("stars");let s="";for(let i=0;i<40;i++){const x=Math.random()*100,y=Math.random()*72,d=(Math.random()*3).toFixed(1);s+=`<div class="star" style="left:${x}vw;top:${y}vh;animation-delay:${d}s"></div>`;}b.innerHTML=s;}
+function at(sec,fn){timers.push(setTimeout(fn,sec*1000));}
+function setSubtitle(t){const s=document.getElementById("subtitle");s.classList.remove("show");timers.push(setTimeout(()=>{s.textContent=t;s.classList.add("show");},250));}
+function startScene(){document.getElementById("startScreen").style.display="none";document.getElementById("replay").style.display="flex";run();}
+function reset(){timers.forEach(clearTimeout);timers=[];document.getElementById("subtitle").classList.remove("show");resetScene();run();}
+
+const antes=document.querySelector(".antes"),despues=document.querySelector(".despues"),
+      vs=document.querySelector(".vs"),stamp=document.querySelector(".stamp");
+function initScene(){}
+function resetScene(){[antes,despues,vs,stamp].forEach(e=>e.classList.remove("in"));}
+function run(){
+  at(0.2,()=>{setSubtitle("Antes: parado 34 días, sin moverse.");antes.classList.add("in");});
+  at(5.5,()=>{setSubtitle("Después: ajustado, y vendido.");vs.classList.add("in");despues.classList.add("in");});
+  at(7.6,()=>stamp.classList.add("in"));
+  at(12.0,()=>setSubtitle("Eso es lo que hace el búho por ti."));
+}
+buildStars();initScene();
+document.getElementById("startBtn").addEventListener("click",startScene);
+document.getElementById("replay").addEventListener("click",reset);
+</script>
+</body>
+</html>
+
+<!-- Web-Autoplay: solo en la copia web. El original en ver1.1 queda intacto. -->
+<style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
+<script>
+  window.addEventListener("load", function () {
+    var b = document.getElementById("startBtn");
+    if (b) { b.click(); }
+    else if (typeof startScene === "function") { startScene(); }
+  });
+</script>

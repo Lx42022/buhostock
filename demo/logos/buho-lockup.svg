@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 320" width="1000" height="320" role="img" aria-label="BuhoStock horizontal lockup">
+  <!-- Concept 8: Combination mark — icon + wordmark "BuhoStock" side by side (horizontal lockup).
+       The icon is a compact night-blue rounded tile so it works as an app icon on its own. -->
+  <defs>
+    <linearGradient id="g8tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a1b4b"/>
+      <stop offset="1" stop-color="#0b0d2b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ICON TILE -->
+  <g transform="translate(40,40)">
+    <rect x="0" y="0" width="240" height="240" rx="56" fill="url(#g8tile)"/>
+
+    <!-- crescent moon accent -->
+    <path d="M196 58 a34 34 0 1 0 6 44 a27 27 0 1 1 -6 -44 Z" fill="#ffc93c" opacity="0.9"/>
+
+    <!-- ears -->
+    <path d="M92 92 L82 58 L106 82 Z" fill="#2a2c6e"/>
+    <path d="M148 92 L158 58 L134 82 Z" fill="#2a2c6e"/>
+    <!-- body -->
+    <path d="M92 94
+             C64 116 60 158 74 196
+             C86 230 108 250 120 250
+             C132 250 154 230 166 196
+             C180 158 176 116 148 94
+             C130 78 110 78 92 94 Z" fill="#2a2c6e"/>
+    <!-- eyes -->
+    <circle cx="102" cy="140" r="26" fill="#f5f3ec"/>
+    <circle cx="138" cy="140" r="26" fill="#f5f3ec"/>
+    <circle cx="102" cy="140" r="13" fill="#0b0d2b"/>
+    <circle cx="138" cy="140" r="13" fill="#0b0d2b"/>
+    <circle cx="106" cy="135" r="4" fill="#ffd966"/>
+    <circle cx="142" cy="135" r="4" fill="#ffd966"/>
+    <!-- beak -->
+    <path d="M120 152 L111 166 L120 178 L129 166 Z" fill="#ffc93c"/>
+  </g>
+
+  <!-- WORDMARK -->
+  <g transform="translate(320,0)">
+    <text x="0" y="180"
+          font-family="'Segoe UI Semibold','Segoe UI',Verdana,sans-serif" font-weight="800"
+          font-size="120" fill="#14163f">Buho<tspan fill="#f5b301">Stock</tspan></text>
+    <!-- underline accent -->
+    <rect x="4" y="196" width="470" height="8" rx="4" fill="#ffc93c"/>
+    <!-- tagline -->
+    <text x="6" y="250"
+          font-family="'Segoe UI','Verdana',sans-serif" font-size="30" letter-spacing="1"
+          fill="#2a2c6e">El búho trabaja mientras duermes.</text>
+  </g>
+</svg>

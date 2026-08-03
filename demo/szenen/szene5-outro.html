@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Búho — Escena 5: Outro</title>
+<link rel="stylesheet" href="_estilo.css">
+<style>
+  /* Scene 5: outro. Show the full lockup (#8) on a cream card + CTA. ~5s, then hold. */
+  .outroWrap{display:flex;flex-direction:column;align-items:center;gap:34px;}
+  .card8{background:var(--cream);border-radius:28px;padding:44px 60px;box-shadow:0 30px 80px rgba(0,0,0,.5);
+    opacity:0;transform:scale(.85);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.9,.3,1.2);}
+  .card8.in{opacity:1;transform:none;}
+  .card8 img{width:min(620px,72vw);display:block;}
+  .cta{font-size:42px;font-weight:800;color:var(--amber);opacity:0;transform:translateY(14px);
+    transition:opacity .7s ease,transform .7s ease;text-shadow:0 0 24px rgba(255,201,60,.4);}
+  .cta.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="stars"></div>
+
+  <div class="outroWrap">
+    <div class="card8"><img src="../logos/buho-lockup.svg" alt="BuhoStock"></div>
+    <div class="cta">¿Hablamos? 👇</div>
+  </div>
+
+  <button id="replay" title="Wiederholen">↻</button>
+  <div id="startScreen">
+    <img class="ss-owl" src="../logos/buho-icon.svg" alt="">
+    <div class="ss-title"><b>Búho</b></div>
+    <div class="ss-sub">Escena 5 · <span>Outro / Cierre</span></div>
+    <button id="startBtn">▶ Empezar</button>
+    <div class="ss-hint">F11 = Vollbild · mit Win+G aufnehmen · dann „Empezar"</div>
+  </div>
+</div>
+
+<script>
+let timers=[];
+function buildStars(){const b=document.getElementById("stars");let s="";for(let i=0;i<40;i++){const x=Math.random()*100,y=Math.random()*72,d=(Math.random()*3).toFixed(1);s+=`<div class="star" style="left:${x}vw;top:${y}vh;animation-delay:${d}s"></div>`;}b.innerHTML=s;}
+function at(sec,fn){timers.push(setTimeout(fn,sec*1000));}
+function startScene(){document.getElementById("startScreen").style.display="none";document.getElementById("replay").style.display="flex";run();}
+function reset(){timers.forEach(clearTimeout);timers=[];resetScene();run();}
+
+const card=document.querySelector(".card8"),cta=document.querySelector(".cta");
+function initScene(){}
+function resetScene(){card.classList.remove("in");cta.classList.remove("in");}
+function run(){
+  at(0.2,()=>card.classList.add("in"));
+  at(1.3,()=>cta.classList.add("in"));
+}
+buildStars();initScene();
+document.getElementById("startBtn").addEventListener("click",startScene);
+document.getElementById("replay").addEventListener("click",reset);
+</script>
+</body>
+</html>
+
+<!-- Web-Autoplay: solo en la copia web. El original en ver1.1 queda intacto. -->
+<style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
+<script>
+  window.addEventListener("load", function () {
+    var b = document.getElementById("startBtn");
+    if (b) { b.click(); }
+    else if (typeof startScene === "function") { startScene(); }
+  });
+</script>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Búho — Escena 1: El catálogo</title>
+<link rel="stylesheet" href="_estilo.css">
+<style>
+  /* Scene 1: introduce the catalog. Fade the table in, then highlight each column. ~30s. */
+  #catalog{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;}
+  #catalog.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="stars"></div>
+  <div id="brand"><img src="../logos/buho-icon.svg" alt=""><span class="name"><b>Búho</b></span></div>
+
+  <div id="catalog"></div>
+
+  <div id="subtitle"></div>
+  <button id="replay" title="Wiederholen">↻</button>
+  <div id="startScreen">
+    <img class="ss-owl" src="../logos/buho-icon.svg" alt="">
+    <div class="ss-title"><b>Búho</b></div>
+    <div class="ss-sub">Escena 1 · <span>El catálogo</span></div>
+    <button id="startBtn">▶ Empezar</button>
+    <div class="ss-hint">F11 = Vollbild · mit Win+G aufnehmen · dann „Empezar"</div>
+  </div>
+</div>
+
+<script>
+let timers=[];
+function buildStars(){const b=document.getElementById("stars");let s="";for(let i=0;i<40;i++){const x=Math.random()*100,y=Math.random()*72,d=(Math.random()*3).toFixed(1);s+=`<div class="star" style="left:${x}vw;top:${y}vh;animation-delay:${d}s"></div>`;}b.innerHTML=s;}
+function at(sec,fn){timers.push(setTimeout(fn,sec*1000));}
+function setSubtitle(t){const s=document.getElementById("subtitle");s.classList.remove("show");timers.push(setTimeout(()=>{s.textContent=t;s.classList.add("show");},250));}
+function startScene(){document.getElementById("startScreen").style.display="none";document.getElementById("replay").style.display="flex";run();}
+function reset(){timers.forEach(clearTimeout);timers=[];document.getElementById("subtitle").classList.remove("show");resetScene();run();}
+
+/* Same illustrative catalog as scene 2 */
+const data=[
+  {art:"Zapatillas Nike Air Max T42",cur:45.00,min:38.00,vaca:false,dias:12},
+  {art:"iPhone 11 64GB",cur:189.00,min:160.00,vaca:false,dias:23},
+  {art:"Chaqueta Levi's Trucker M",cur:39.00,min:30.00,vaca:false,dias:34},
+  {art:"Reloj Casio G-Shock",cur:65.00,min:55.00,vaca:true,dias:5},
+  {art:"Auriculares Sony WH-1000",cur:89.00,min:70.00,vaca:false,dias:18},
+  {art:"PlayStation 4 Slim",cur:120.00,min:100.00,vaca:false,dias:15},
+  {art:"Camiseta Adidas L",cur:15.00,min:15.00,vaca:false,dias:27},
+  {art:"Taladro Bosch Professional",cur:95.00,min:80.00,vaca:false,dias:30},
+  {art:"Gafas Ray-Ban Aviator",cur:75.00,min:60.00,vaca:true,dias:3},
+  {art:"Abrigo Zara Mujer S",cur:29.00,min:22.00,vaca:false,dias:20},
+];
+function fmt(n){return n.toFixed(2).replace(".",",")+" €";}
+function buildTable(){
+  let h=`<div class="row head">
+    <div class="cell c-art">Artículo</div><div class="cell c-actual">Precio actual</div>
+    <div class="cell c-min">Precio mínimo</div><div class="cell c-vaca">¿Vaca lechera?</div>
+    <div class="cell c-dias">Días parado</div></div>`;
+  data.forEach((d,i)=>{h+=`<div class="row data" id="row-${i}">
+    <div class="cell c-art">${d.art}</div><div class="cell c-actual">${fmt(d.cur)}</div>
+    <div class="cell c-min">${fmt(d.min)}</div>
+    <div class="cell c-vaca ${d.vaca?"si":"no"}">${d.vaca?"SÍ":"NO"}</div>
+    <div class="cell c-dias">${d.dias}</div></div>`;});
+  document.getElementById("catalog").innerHTML=h;
+}
+function highlightCol(cls){
+  document.querySelectorAll(".col-hl").forEach(c=>c.classList.remove("col-hl"));
+  document.querySelectorAll("."+cls).forEach(c=>c.classList.add("col-hl"));
+}
+function initScene(){buildTable();}
+function resetScene(){buildTable();document.getElementById("catalog").classList.remove("in");}
+function run(){
+  at(0.05,()=>document.getElementById("catalog").classList.add("in"));
+  at(0.3,()=>setSubtitle("Esto es tu catálogo. Una hoja simple."));
+  at(6.0,()=>{setSubtitle("Cada artículo, con su precio actual.");highlightCol("c-actual");});
+  at(12.0,()=>{setSubtitle("Aquí pones tu precio mínimo: de ahí no baja jamás.");highlightCol("c-min");});
+  at(18.5,()=>{setSubtitle("¿Vaca lechera? La marcas y el búho ni la toca.");highlightCol("c-vaca");});
+  at(24.5,()=>{setSubtitle("Y ves cuántos días lleva parado cada uno.");highlightCol("c-dias");});
+}
+buildStars();initScene();
+document.getElementById("startBtn").addEventListener("click",startScene);
+document.getElementById("replay").addEventListener("click",reset);
+</script>
+</body>
+</html>
+
+<!-- Web-Autoplay: solo en la copia web. El original en ver1.1 queda intacto. -->
+<style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
+<script>
+  window.addEventListener("load", function () {
+    var b = document.getElementById("startBtn");
+    if (b) { b.click(); }
+    else if (typeof startScene === "function") { startScene(); }
+  });
+</script>
