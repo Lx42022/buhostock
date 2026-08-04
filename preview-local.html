@@ -1,41 +1,22 @@
 <!DOCTYPE html>
+<!-- =========================================================================
+     VISTA PREVIA LOCAL — sin PIN, sin deploy.
+     Copia de index.html SOLO para revisar en el navegador (doble clic).
+     ⚠️ NO subir este archivo a producción / GitHub Pages.
+     ========================================================================= -->
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- SEO / social preview. "Wallapop" nunca aparece (regla de marca). -->
-  <title>Búho · Gestión de precios automática para tu stock de segunda mano</title>
-  <meta name="description" content="Búho ajusta los precios de tu stock cada noche, respeta tu precio mínimo y cada mañana te manda un informe al móvil. Repricing automático para reseller profesionales. Primeros 30 días gratis." />
-  <!-- Preview privada: no indexar en buscadores. -->
+  <title>Búho · VISTA PREVIA LOCAL</title>
   <meta name="robots" content="noindex, nofollow" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Búho · El búho trabaja mientras duermes" />
-  <meta property="og:description" content="Repricing automático para tu stock de segunda mano. Ajusta precios de noche, respeta tu mínimo y te informa cada mañana." />
-  <meta property="og:locale" content="es_ES" />
 
-  <!-- Favicon como emoji (SVG en línea) — sin archivo externo, sin peticiones extra. -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-  <!-- ============ PUERTA DE ACCESO (PIN) — solo para la preview privada ============ -->
-  <div class="pin-gate" id="pinGate">
-    <div class="pin-gate__box">
-      <div class="pin-gate__owl" aria-hidden="true">🦉</div>
-      <h1>Acceso privado</h1>
-      <p>Introduce el PIN para ver la página.</p>
-      <form id="pinForm" autocomplete="off">
-        <input type="password" id="pinInput" name="pin" placeholder="PIN"
-               autocomplete="off" autocapitalize="characters" spellcheck="false"
-               aria-label="PIN de acceso" />
-        <button type="submit">Entrar</button>
-      </form>
-      <p class="pin-gate__error" id="pinError" hidden>PIN incorrecto</p>
-    </div>
-  </div>
 
   <!-- ============ CABECERA ============ -->
   <header class="site-header" id="top">
@@ -586,7 +567,7 @@
 
   <!-- ============ Reproductor incrustado (autoplay mudo, voz opcional) ============ -->
   <script>
-    // Se define aquí y lo arranca la puerta PIN al desbloquear.
+    // Se define aquí y lo arranca el iniciador de abajo (en la web real lo arranca la puerta PIN).
     window.startBuhoEmbed = function () {
       var wrap = document.getElementById("embedWrap");
       if (!wrap || wrap.dataset.started) return;
@@ -716,49 +697,12 @@
     };
   </script>
 
-  <!-- ============ Lógica de la puerta PIN (preview privada) ============ -->
+  <!-- ============ Iniciador SIN PIN (solo para esta vista previa local) ============ -->
   <script>
-    (function () {
-      // SHA-256 del PIN. El PIN en claro NO está en el código.
-      var PIN_HASH = "b62ae2df8a426804bc7c58955ceeb977e240a0727ae0018eb62a6c637ab5b135";
-      var gate = document.getElementById("pinGate");
-      if (!gate) return;
-
-      function boot() { gate.remove(); if (window.startBuhoEmbed) window.startBuhoEmbed(); }
-
-      // Si ya se validó en esta sesión, quitar la puerta y arrancar el reproductor.
-      if (sessionStorage.getItem("buho_ok") === "1") { boot(); return; }
-
-      var form = document.getElementById("pinForm");
-      var input = document.getElementById("pinInput");
-      var error = document.getElementById("pinError");
-
-      // Calcula el SHA-256 de un texto usando la Web Crypto API (necesita https).
-      async function sha256Hex(text) {
-        var data = new TextEncoder().encode(text);
-        var buf = await crypto.subtle.digest("SHA-256", data);
-        return Array.from(new Uint8Array(buf))
-          .map(function (b) { return b.toString(16).padStart(2, "0"); })
-          .join("");
-      }
-
-      form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        // Se ignoran mayúsculas/minúsculas para que sea más fácil.
-        var value = (input.value || "").trim().toUpperCase();
-        var hash = await sha256Hex(value);
-        if (hash === PIN_HASH) {
-          sessionStorage.setItem("buho_ok", "1");
-          boot();
-        } else {
-          error.hidden = false;
-          input.value = "";
-          input.focus();
-        }
-      });
-
-      input.focus();
-    })();
+    // Vista previa local: arranca el reproductor directamente, sin puerta PIN.
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.startBuhoEmbed) window.startBuhoEmbed();
+    });
   </script>
 
   <script src="script.js"></script>

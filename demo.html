@@ -19,6 +19,9 @@
       font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
       overflow: hidden;
     }
+    /* Dynamic viewport height on mobile: prevents the browser address bar from
+       squeezing the stage, which made the video tiny on phones. */
+    html, body { height: 100dvh; }
     body { display: flex; flex-direction: column; }
     a { color: inherit; text-decoration: none; }
 
@@ -91,7 +94,14 @@
       background: var(--amber); color: var(--night-1); font-weight: 700; font-size: 1rem; cursor: pointer; }
     .pin-gate__error { color: #ff8080; font-size: 0.9rem; margin: 4px 0 0; }
 
-    @media (max-width: 620px) { .label { min-width: 0; width: 100%; order: -1; } }
+    @media (max-width: 620px) {
+      .label { min-width: 0; width: 100%; order: -1; }
+      /* Give the video as much room as possible on phones. */
+      .topbar { padding: 8px 12px; }
+      .topbar__tag { display: none; }
+      .stage-wrap { padding: 8px; }
+      .controls { gap: 10px; padding: 10px 12px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -290,10 +300,14 @@
       }
     });
 
-    // ---- Escalar el iframe (1920x1080) para que quepa manteniendo 16:9 ----
+    // ---- Scale the 1920x1080 iframe to fit while keeping 16:9 ----
+    // Padding is read live so it also works with the compact mobile layout.
     function fitStage() {
-      var availW = stageWrap.clientWidth - 36;   // menos el padding
-      var availH = stageWrap.clientHeight - 36;
+      var cs = getComputedStyle(stageWrap);
+      var padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+      var padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      var availW = stageWrap.clientWidth - padX;
+      var availH = stageWrap.clientHeight - padY;
       var w = Math.min(availW, availH * 16 / 9);
       if (w < 200) w = 200;
       var h = w * 9 / 16;
@@ -301,7 +315,12 @@
       stage.style.height = h + "px";
       frame.style.transform = "scale(" + (w / 1920) + ")";
     }
-    window.addEventListener("resize", fitStage);
+    // ResizeObserver reacts to ANY container size change (rotation, mobile toolbar,
+    // fullscreen) — iOS Safari fires "resize"/"orientationchange" unreliably, which is
+    // why the video did not resize on mobile/landscape before.
+    if (window.ResizeObserver) { new ResizeObserver(fitStage).observe(stageWrap); }
+    else { window.addEventListener("resize", fitStage); }
+    window.addEventListener("orientationchange", function () { setTimeout(fitStage, 250); });
 
     // ---- Puerta PIN (mismo esquema que la web principal) ----
     (function () {
