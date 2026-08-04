@@ -112,17 +112,19 @@
       </div>
     </section>
 
-    <!-- ===== TEMPORAL (comparación): la misma demo como vídeo MP4 real =====
-         Se muestra DEBAJO del reproductor actual para comparar la nitidez.
-         Si nos quedamos con el vídeo, se elimina el reproductor de arriba. -->
+    <!-- ===== Demo en MÓVIL: vídeo MP4 (nítido, con voz Álvaro). En escritorio se
+         oculta y se muestra el reproductor HTML de arriba (ver styles.css). ===== -->
     <section class="section" id="ver-demo-mp4">
       <div class="container">
-        <h2 class="section__title center">▼ Versión nueva en vídeo (MP4)</h2>
+        <h2 class="section__title center">Míralo funcionando</h2>
         <p class="section__subtitle center">
-          La misma demo, como vídeo real con voz. Compárala con el reproductor de arriba.
+          Una noche del búho, en un minuto. Toca el altavoz 🔊 para oír la explicación.
         </p>
-        <div class="embed">
-          <video controls playsinline preload="metadata"
+        <!-- Wider than the default .embed (max-width:none -> fills the container) so
+             details are easier to see. autoplay+muted+loop: browsers only allow autoplay
+             when muted; the viewer taps the speaker icon to hear Álvaro. -->
+        <div class="embed" style="max-width: none;">
+          <video controls autoplay muted loop playsinline preload="auto"
                  style="width:100%; aspect-ratio:16/9; display:block; border-radius:16px;
                         border:1px solid var(--border); box-shadow:var(--shadow); background:#0b0d2b;">
             <source src="demo/buho-demo.mp4" type="video/mp4" />

@@ -352,10 +352,71 @@ a { color: inherit; text-decoration: none; }
 .footer__copy { color: var(--text-mut); font-size: 0.86rem; }
 
 /* =========================================================================
+   SECCIÓN VALOR ("más que bajar precios") + argumento "empleado"
+   ========================================================================= */
+.section--value { background: linear-gradient(180deg, rgba(245, 184, 61, 0.04), transparent); }
+.proof-highlight--empleado {
+  margin-top: 34px;
+  background: linear-gradient(135deg, rgba(245, 184, 61, 0.14), var(--bg-card-2));
+  border-color: var(--accent);
+}
+
+/* =========================================================================
+   COMPARATIVA (tabla)
+   ========================================================================= */
+.section--compare { background: linear-gradient(180deg, rgba(93, 63, 211, 0.06), transparent); }
+.compare-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.compare { width: 100%; min-width: 640px; border-collapse: collapse; background: var(--bg-card); }
+.compare th, .compare td { padding: 14px 16px; text-align: center; border-bottom: 1px solid var(--border); }
+.compare thead th { color: var(--text-mut); font-weight: 600; font-size: 0.95rem; background: var(--bg-card-2); }
+.compare tbody th { text-align: left; font-weight: 500; color: var(--text); font-size: 0.97rem; }
+.compare__owl { color: var(--accent); font-weight: 800; }
+.compare td.c-yes { color: var(--wa); font-size: 1.2rem; font-weight: 700; }
+.compare td.c-no  { color: #ff7a7a; font-size: 1.1rem; }
+.compare td.c-dash, .compare td.c-mid { color: var(--text-mut); }
+.compare tbody tr:last-child th, .compare tbody tr:last-child td { border-bottom: 0; }
+.compare tbody td:last-child { background: rgba(245, 184, 61, 0.06); }
+.section--compare .disclaimer { margin-top: 22px; }
+
+/* =========================================================================
+   CALCULADORA de ahorro de tiempo
+   ========================================================================= */
+.section--calc { background: linear-gradient(180deg, rgba(245, 184, 61, 0.04), transparent); }
+.calc {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  box-shadow: var(--shadow);
+}
+.calc__label { display: block; text-align: center; font-size: 1.15rem; margin-bottom: 18px; }
+.calc__label strong { color: var(--accent); }
+.calc__range { width: 100%; accent-color: var(--accent); height: 6px; cursor: pointer; }
+.calc__out { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+.calc__card {
+  background: var(--bg-card-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 16px;
+  text-align: center;
+}
+.calc__card--buho { border-color: var(--accent); background: rgba(245, 184, 61, 0.08); }
+.calc__num { display: block; font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; color: var(--accent); margin-bottom: 6px; }
+.calc__cap { color: var(--text-mut); font-size: 0.9rem; }
+.calc__note { color: var(--text-mut); font-size: 0.86rem; text-align: center; margin-top: 20px; }
+.calc__cta { margin-top: 34px; }
+
+/* =========================================================================
    RESPONSIVE (móvil)
    ========================================================================= */
 @media (max-width: 860px) {
   .steps, .features, .pricing { grid-template-columns: 1fr; }
+  .calc__out { grid-template-columns: 1fr; }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .plan--featured { transform: none; }
 
@@ -443,3 +504,12 @@ a { color: inherit; text-decoration: none; }
 .embed__full { display: inline-flex; align-items: center; gap: 6px; padding: 0 16px; height: 44px;
   border-radius: 999px; border: 1px solid var(--border); color: var(--text); font-size: .92rem; }
 .embed__full:hover { background: var(--bg-card-2); }
+
+/* Demo player split by device:
+   - Desktop (> 860px): keep the HTML scene player (#ver-demo), hide the MP4.
+   - Phones (<= 860px): hide the HTML player, show the crisp MP4 video (#ver-demo-mp4). */
+#ver-demo-mp4 { display: none; }
+@media (max-width: 860px) {
+  #ver-demo { display: none; }
+  #ver-demo-mp4 { display: block; }
+}
