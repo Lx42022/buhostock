@@ -106,34 +106,79 @@ document.getElementById("replay").addEventListener("click",reset);
 </body>
 </html>
 
-<!-- Web control (solo copia web): velocidad (spd) + voz opcional. Original ver1.1 intacto. -->
+<!-- Web control (solo copia web): velocidad (spd) + pausa/reanuda + voz opcional. Original ver1.1 intacto. -->
 <style>#startScreen{display:none!important}.ss-hint{display:none!important}#replay{display:none!important}</style>
 <script>
+  // ---- Web control (only in the web copy): speed (spd) + pause/resume + optional voice ----
+  // The original ver1.1 animation (when opened without URL params) stays untouched.
   window.addEventListener("load", function () {
     var q = new URLSearchParams(location.search);
     var spd = parseFloat(q.get("spd")); if (!(spd > 0)) spd = 1;
     var voz = q.get("voz") === "1";
 
-    // Velocidad: escalar todos los pasos programados.
+    // --- Track every setTimeout so we can truly pause/resume the whole scene ---
+    // The scene schedules all its steps via setTimeout (at, flash, setSubtitle, ...).
+    // By wrapping setTimeout we can freeze and later resume all pending steps.
+    var _origST = window.setTimeout;
+    var _origClearTimeout = window.clearTimeout;  // must be defined BEFORE pauseScene uses it
+    var _pending = [];          // list of {id, fn, delay, start, remaining}
+    var _paused = false;
+    window.setTimeout = function (fn, delay) {
+      var rec = { fn: fn, delay: delay, start: Date.now() };
+      rec.id = _origST(function () {
+        var k = _pending.indexOf(rec); if (k >= 0) _pending.splice(k, 1);
+        fn();
+      }, delay);
+      _pending.push(rec);
+      return rec.id;            // real id -> existing clearTimeout(...) keeps working
+    };
+
+    function pauseScene() {
+      if (_paused) return; _paused = true;
+      var now = Date.now();
+      _pending.forEach(function (rec) {
+        _origClearTimeout(rec.id);
+        rec.remaining = Math.max(0, rec.delay - (now - rec.start));
+      });
+      document.documentElement.classList.add("buho-paused");  // freeze CSS animations (stars, etc.)
+    }
+    function resumeScene() {
+      if (!_paused) return; _paused = false;
+      var list = _pending.slice(); _pending = [];
+      list.forEach(function (rec) {
+        rec.start = Date.now(); rec.delay = rec.remaining;
+        rec.id = _origST(function () {
+          var k = _pending.indexOf(rec); if (k >= 0) _pending.splice(k, 1);
+          rec.fn();
+        }, rec.remaining);
+        _pending.push(rec);
+      });
+      document.documentElement.classList.remove("buho-paused");
+    }
+
+    // Speed: scale all scheduled steps (uses the wrapped setTimeout above).
     try { at = function (sec, fn) { timers.push(setTimeout(fn, sec * 1000 * spd)); }; } catch (e) {}
 
-    // Voz: leer cada linea de subtitulo en espanol (Web Speech API, gratis).
-    if (voz && "speechSynthesis" in window) {
+    // Voice: instead of speaking inside the iframe (blocked on mobile), send the
+    // subtitle text up to the PARENT page, which speaks it from a real user gesture.
+    if (voz && typeof setSubtitle === "function") {
       try {
         var _origSet = setSubtitle;
         setSubtitle = function (t) {
           _origSet(t);
-          try {
-            var u = new SpeechSynthesisUtterance(t);
-            u.lang = "es-ES"; u.rate = 1;
-            var vs = window.speechSynthesis.getVoices() || [];
-            for (var i = 0; i < vs.length; i++) { if (/es[-_]/i.test(vs[i].lang)) { u.voice = vs[i]; break; } }
-            window.speechSynthesis.speak(u);
-          } catch (e) {}
+          try { parent.postMessage({ type: "buho-say", text: t }, "*"); } catch (e) {}
         };
       } catch (e) {}
     }
 
+    // Listen for pause/resume commands from the parent player.
+    window.addEventListener("message", function (e) {
+      var d = e.data || {};
+      if (d.type === "buho-pause") pauseScene();
+      else if (d.type === "buho-resume") resumeScene();
+    });
+
+    // Autostart (same as before): trigger the scene's own start.
     var b = document.getElementById("startBtn");
     if (b) { b.click(); } else if (typeof startScene === "function") { startScene(); }
   });

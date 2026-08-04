@@ -165,6 +165,10 @@
     var SPEED = 0.6;   // < 1 = más rápido (misma cifra que el reproductor de la portada)
     var voz = false;   // narración por voz (Web Speech), desactivada por defecto
     function urlFor(i) { return SCENES[i].f + "?spd=" + SPEED + (voz ? "&voz=1" : ""); }
+    // Track remaining time for true pause/resume (no iframe reload on play).
+    var sceneStart = 0, sceneRemaining = 0;
+    // Helper to send postMessage commands to the scene iframe.
+    function post(t) { try { frame.contentWindow.postMessage({ type: t }, "*"); } catch (e) {} }
 
     // Crear los puntos (dots) de navegación.
     SCENES.forEach(function (s, i) {
@@ -183,41 +187,87 @@
 
     function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
 
-    // Programar el salto a la siguiente escena (solo si está reproduciendo).
+    // Schedule the jump to the next scene (only if playing).
+    // BUG 1 FIX: Now also tracks sceneStart + sceneRemaining so we can pause mid-scene.
     function schedule() {
       clearTimer();
       if (!playing) return;
+      sceneStart = Date.now();
+      sceneRemaining = SCENES[idx].d * SPEED * 1000;
       timer = setTimeout(function () {
         if (idx < SCENES.length - 1) { goTo(idx + 1); }
-        else { playing = false; updateUI(); }   // fin: se para
-      }, SCENES[idx].d * SPEED * 1000);
+        else { playing = false; updateUI(); }   // end of demo: stop
+      }, sceneRemaining);
     }
 
-    // Cargar una escena. Al terminar de cargar el iframe, se programa el avance.
+    // Load a scene. Cancel any ongoing speech first to avoid overlapping audio.
     function goTo(i) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
       idx = (i + SCENES.length) % SCENES.length;
-      frame.src = urlFor(idx);   // recargar = la animación vuelve a empezar (con velocidad/voz)
+      frame.src = urlFor(idx);   // reload = animation restarts (with speed/voz params)
       updateUI();
     }
 
     frame.addEventListener("load", schedule);
 
+    // BUG 1 FIX: Pause sends postMessage to freeze the iframe; resume continues exactly
+    // where paused (no reload). Only restarts from scene 0 if the demo had fully ended.
     playBtn.addEventListener("click", function () {
-      if (playing) { playing = false; clearTimer(); updateUI(); }
-      else {
-        playing = true;
-        if (idx === SCENES.length - 1) idx = 0;   // si acabó, reiniciar
-        frame.src = urlFor(idx);                  // recargar para reproducir de nuevo
+      if (playing) {
+        playing = false;
+        // Save remaining time for this scene.
+        if (timer) { clearTimeout(timer); timer = null; sceneRemaining -= (Date.now() - sceneStart); }
+        post("buho-pause");   // freeze scene's internal timers + CSS animations
+        if (voz) { try { window.speechSynthesis.pause(); } catch (e) {} }
         updateUI();
+      } else {
+        playing = true;
+        if (idx === SCENES.length - 1 && sceneRemaining <= 0) {
+          // Demo had finished completely -> restart from scene 0.
+          idx = 0; frame.src = urlFor(idx); updateUI();
+        } else {
+          post("buho-resume");  // unfreeze scene
+          if (voz) { try { window.speechSynthesis.resume(); } catch (e) {} }
+          // Resume outer timer from the remaining duration.
+          sceneStart = Date.now();
+          timer = setTimeout(function () {
+            if (idx < SCENES.length - 1) { goTo(idx + 1); } else { playing = false; updateUI(); }
+          }, Math.max(0, sceneRemaining));
+          updateUI();
+        }
       }
     });
     document.getElementById("prevBtn").addEventListener("click", function () { goTo(idx - 1); });
     document.getElementById("nextBtn").addEventListener("click", function () { goTo(idx + 1); });
+    // BUG 2 FIX: Warm-up speak() inside the button's user gesture to unlock audio on mobile.
     document.getElementById("vozBtn").addEventListener("click", function () {
       voz = !voz;
       this.textContent = voz ? "🔊 Con voz" : "🔇 Sin voz";
-      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
-      goTo(idx);   // recargar para aplicar la voz (clic = gesto de usuario -> audio permitido)
+      try {
+        window.speechSynthesis.cancel();
+        if (voz) {
+          // Silent warm-up utterance inside user gesture -> unlocks audio on iOS/Android.
+          var warm = new SpeechSynthesisUtterance(" "); warm.volume = 0;
+          window.speechSynthesis.speak(warm);
+        }
+      } catch (e) {}
+      goTo(idx);   // reload to pass the ?voz=1 flag to the scene
+    });
+
+    // BUG 2 FIX: Receive subtitle text from the scene iframe and speak it here (parent page),
+    // where the original user gesture (vozBtn click) already unlocked the audio context.
+    window.addEventListener("message", function (e) {
+      var d = e.data || {};
+      if (d.type === "buho-say" && voz) {
+        try {
+          var u = new SpeechSynthesisUtterance(d.text);
+          u.lang = "es-ES"; u.rate = 1;
+          // Pick a Spanish voice if available, fall back to browser default.
+          var vs = window.speechSynthesis.getVoices() || [];
+          for (var i = 0; i < vs.length; i++) { if (/es[-_]/i.test(vs[i].lang)) { u.voice = vs[i]; break; } }
+          window.speechSynthesis.speak(u);
+        } catch (e2) {}
+      }
     });
 
     // ---- Escalar el iframe (1920x1080) para que quepa manteniendo 16:9 ----
