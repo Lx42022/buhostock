@@ -254,17 +254,37 @@
       goTo(idx);   // reload to pass the ?voz=1 flag to the scene
     });
 
+    // Cache the best Spanish voice. Voices load asynchronously (often empty on the
+    // first call, especially on mobile), so we refresh the pick when the browser
+    // fires "voiceschanged". Preferring "Google es-ES" makes the mobile voice match
+    // the higher-quality desktop Chrome voice instead of the robotic system default.
+    var _bestVoice = null;
+    function buhoPickVoice() {
+      var vs = window.speechSynthesis.getVoices() || [];
+      var es = vs.filter(function (v) { return /^es([-_]|$)/i.test(v.lang); });
+      if (!es.length) { _bestVoice = null; return; }
+      var prefs = [
+        function (v) { return /google/i.test(v.name) && /es[-_]es/i.test(v.lang); }, // = desktop Chrome
+        function (v) { return /google/i.test(v.name); },
+        function (v) { return /microsoft/i.test(v.name) && /es[-_]es/i.test(v.lang); },
+        function (v) { return /es[-_]es/i.test(v.lang); },                            // Spain Spanish
+        function () { return true; }
+      ];
+      for (var p = 0; p < prefs.length; p++) { var m = es.filter(prefs[p]); if (m.length) { _bestVoice = m[0]; return; } }
+      _bestVoice = es[0];
+    }
+    try { buhoPickVoice(); window.speechSynthesis.onvoiceschanged = buhoPickVoice; } catch (e) {}
+
     // BUG 2 FIX: Receive subtitle text from the scene iframe and speak it here (parent page),
     // where the original user gesture (vozBtn click) already unlocked the audio context.
     window.addEventListener("message", function (e) {
       var d = e.data || {};
       if (d.type === "buho-say" && voz) {
         try {
+          if (!_bestVoice) buhoPickVoice();   // last-chance pick if voices just arrived
           var u = new SpeechSynthesisUtterance(d.text);
-          u.lang = "es-ES"; u.rate = 1;
-          // Pick a Spanish voice if available, fall back to browser default.
-          var vs = window.speechSynthesis.getVoices() || [];
-          for (var i = 0; i < vs.length; i++) { if (/es[-_]/i.test(vs[i].lang)) { u.voice = vs[i]; break; } }
+          u.lang = "es-ES"; u.rate = 1; u.pitch = 1;
+          if (_bestVoice) u.voice = _bestVoice;
           window.speechSynthesis.speak(u);
         } catch (e2) {}
       }
