@@ -1,768 +1,285 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- SEO / social preview. "Wallapop" nunca aparece (regla de marca). -->
-  <title>Búho · Gestión de precios automática para tu stock de segunda mano</title>
-  <meta name="description" content="Búho ajusta los precios de tu stock cada noche, respeta tu precio mínimo y cada mañana te manda un informe al móvil. Repricing automático para reseller profesionales. Primeros 30 días gratis." />
-  <!-- Preview privada: no indexar en buscadores. -->
-  <meta name="robots" content="noindex, nofollow" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Búho · El búho trabaja mientras duermes" />
-  <meta property="og:description" content="Repricing automático para tu stock de segunda mano. Ajusta precios de noche, respeta tu mínimo y te informa cada mañana." />
-  <meta property="og:locale" content="es_ES" />
-
-  <!-- Favicon como emoji (SVG en línea) — sin archivo externo, sin peticiones extra. -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦉</text></svg>" />
-
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>BuhoStock · Tus anuncios de Wallapop, arriba cada noche</title>
+  <meta name="description" content="BuhoStock vuelve a subir tus anuncios de Wallapop cada noche, baja poco a poco el precio de lo que no se vende hasta tu mínimo y cada mañana te manda un informe. 30 días gratis, sin permanencia.">
+  <meta name="theme-color" content="#101233">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BuhoStock · Mientras duermes, tus anuncios vuelven arriba">
+  <meta property="og:description" content="Renueva tus anuncios cada noche, ajusta precios sin bajar de tu mínimo y te manda el informe por la mañana. 30 días gratis.">
+  <meta property="og:locale" content="es_ES">
+  <link rel="icon" href="assets/buho-icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/schibsted-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/config.js" defer></script>
+  <script src="assets/main.js" defer></script>
 </head>
 <body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
 
-  <!-- ============ PUERTA DE ACCESO (PIN) — solo para la preview privada ============ -->
-  <div class="pin-gate" id="pinGate">
-    <div class="pin-gate__box">
-      <div class="pin-gate__owl" aria-hidden="true">🦉</div>
-      <h1>Acceso privado</h1>
-      <p>Introduce el PIN para ver la página.</p>
-      <form id="pinForm" autocomplete="off">
-        <input type="password" id="pinInput" name="pin" placeholder="PIN"
-               autocomplete="off" autocapitalize="characters" spellcheck="false"
-               aria-label="PIN de acceso" />
-        <button type="submit">Entrar</button>
-      </form>
-      <p class="pin-gate__error" id="pinError" hidden>PIN incorrecto</p>
-    </div>
-  </div>
-
-  <!-- ============ CABECERA ============ -->
   <header class="site-header" id="top">
-    <nav class="nav container">
-      <a href="#top" class="brand" aria-label="Búho - inicio">
-        <span class="brand__icon">🦉</span>
-        <span class="brand__name">Búho</span>
+    <div class="wrap">
+      <a class="brand" href="#top" aria-label="BuhoStock, inicio">
+        <img src="assets/buho-icon.svg" alt="" width="32" height="32">
+        <span>BuhoStock</span>
       </a>
-
-      <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-
-      <ul class="nav__links" id="navLinks">
-        <li><a href="#como-funciona">Cómo funciona</a></li>
-        <li><a href="#resultados">Resultados</a></li>
-        <li><a href="#calculadora">Calcula tu ahorro</a></li>
-        <li><a href="#precios">Precios</a></li>
-        <li><a href="#faq">Preguntas</a></li>
-        <li><a href="#contacto" class="btn btn--wa js-whatsapp">Hablar por WhatsApp</a></li>
-      </ul>
-    </nav>
+      <nav class="nav" aria-label="Principal">
+        <a href="#como">Cómo funciona</a>
+        <a href="#resultados">Resultados</a>
+        <a href="#precios">Precios</a>
+        <a href="#preguntas">Preguntas</a>
+      </nav>
+      <a class="btn btn-primary btn-small" href="#alta">Pruébalo gratis</a>
+    </div>
   </header>
 
-  <main>
+  <main id="contenido">
 
-    <!-- ============ HÉROE ============ -->
-    <section class="hero">
-      <div class="hero__stars" aria-hidden="true"></div>
-      <div class="container hero__inner">
-        <p class="hero__eyebrow">Gestión de precios automática para reseller profesionales</p>
-        <h1 class="hero__title">El búho trabaja<br />mientras&nbsp;duermes.</h1>
-        <p class="hero__subtitle">
-          Búho ajusta los precios de tu stock cada noche, nunca baja de tu precio mínimo
-          y cada mañana te manda un informe al móvil. Tú solo cobras y repones.
-        </p>
-
-        <div class="hero__cta">
-          <a href="#contacto" class="btn btn--wa btn--lg js-whatsapp">
-            <span aria-hidden="true">💬</span> Hablar por WhatsApp
-          </a>
-          <a href="demo.html" class="btn btn--ghost btn--lg">▶ Ver demo (2 min)</a>
+    <!-- HERO -->
+    <section class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Para tiendas de segunda mano en Wallapop</span>
+        <h1>Mientras duermes, tus anuncios vuelven arriba.</h1>
+        <p class="lead">Cada noche BuhoStock vuelve a subir tus anuncios y baja poco a poco el precio de lo que no se vende, nunca por debajo de tu mínimo. A las seis tienes el informe en tu correo.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#alta" id="hero-cta">Quiero probarlo · 30 días gratis</a>
+          <span class="note">Sin permanencia. Cancelas cuando quieras.</span>
         </div>
+      </div>
 
-        <ul class="hero__badges">
-          <li>✅ Primeros 30 días gratis</li>
-          <li>✅ Sin permanencia, mes a mes</li>
-          <li>✅ No guardamos tu contraseña</li>
+      <figure class="phone" aria-label="Ejemplo del informe que recibes cada mañana" style="margin-top:0;margin-bottom:0">
+        <div class="phone-screen">
+          <span class="mail-meta">Correo · hoy 06:12</span>
+          <span class="mail-subject">Buenos días: esto hizo Búho esta noche</span>
+          <div class="tiles">
+            <div class="tile"><b>261</b><span>revisados</span></div>
+            <div class="tile"><b>38</b><span>renovados</span></div>
+            <div class="tile sold"><b>2</b><span>vendidos</span></div>
+            <div class="tile"><b>8 h</b><span>trabajadas</span></div>
+          </div>
+          <div class="mail-rows">
+            <div><span>iPhone 11 · 64 GB</span><b>219 → 214 €</b></div>
+            <div><span>Switch OLED</span><b>renovado</b></div>
+            <div><span>Mando DualSense</span><b>en tu mínimo</b></div>
+          </div>
+          <span class="mail-foot">Ejemplo: una noche media de nuestras cuentas.</span>
+        </div>
+      </figure>
+    </section>
+
+    <!-- REAL NUMBERS -->
+    <section class="wrap" id="resultados" aria-labelledby="resultados-titulo">
+      <h2 class="skip" id="resultados-titulo">Resultados reales</h2>
+      <div class="stats">
+        <div class="stat"><b>71</b><span>noches seguidas trabajando</span></div>
+        <div class="stat"><b>18.544</b><span>productos gestionados</span></div>
+        <div class="stat"><b>2.706</b><span>anuncios renovados a tiempo</span></div>
+        <div class="stat"><b>22 → 49</b><span>ventas al mes desde que lo usamos</span></div>
+      </div>
+      <p class="stats-source">Nuestras 2 cuentas de electrónica, abril–julio 2026. Correlación, no garantía.</p>
+    </section>
+
+    <!-- ONE NIGHT -->
+    <section class="wrap section" id="como" aria-labelledby="como-titulo">
+      <h2 class="h2" id="como-titulo">Una noche de trabajo, mientras tú descansas</h2>
+      <div class="night-steps">
+        <div class="step"><time>23:00</time><h3>Arranca solo</h3><p>El programa despierta tu PC y abre tu cuenta.</p></div>
+        <div class="step"><time>00:30</time><h3>Ajusta precios</h3><p>Baja paso a paso lo que está parado. Nunca por debajo de tu mínimo.</p></div>
+        <div class="step"><time>03:00</time><h3>Renueva anuncios</h3><p>Los que llevan tiempo quietos vuelven a salir arriba en las búsquedas.</p></div>
+        <div class="step"><time>06:00</time><h3>Te lo cuenta</h3><p>Informe por correo: qué cambió y qué se vendió. Tú solo cobras y repones.</p></div>
+      </div>
+    </section>
+
+    <!-- YOU ARE IN CONTROL -->
+    <section class="wrap section" aria-labelledby="mandas-titulo">
+      <div class="split">
+        <div class="split-head">
+          <h2 class="h2" id="mandas-titulo">Tú pones las reglas. Búho las cumple.</h2>
+          <p class="lead">Nada se mueve fuera de lo que tú decides. Y lo puedes cambiar cuando quieras.</p>
+        </div>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><strong>Tu precio mínimo</strong><span>Uno por artículo, o una regla para todos. Búho nunca baja de ahí.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><strong>Tu ritmo</strong><span>Cuánto baja cada vez y cada cuántos días.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><strong>Tus anuncios</strong><span>Eliges cuáles entran. Lo que vende bien, no se toca.</span></div></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><div><strong>Pausa cuando quieras</strong><span>Vacaciones, inventario o lo que sea: lo paras y lo reanudas.</span></div></li>
         </ul>
       </div>
     </section>
 
-    <!-- ============ DEMO INCRUSTADA (autoplay, sin sonido) ============ -->
-    <section class="section" id="ver-demo">
-      <div class="container">
-        <h2 class="section__title center">Míralo funcionando</h2>
-        <p class="section__subtitle center">
-          Una noche del búho, en un minuto. Empieza solo y sin sonido —
-          pulsa <strong>🔇&nbsp;Sin voz</strong> para escuchar la explicación.
-        </p>
-        <div class="embed" id="embedWrap">
-          <div class="embed__stage" id="embedFrameWrap">
-            <iframe id="embedFrame" title="Demo Búho" scrolling="no"></iframe>
-          </div>
-          <div class="embed__controls">
-            <button class="embed__btn" id="embedPrev" aria-label="Escena anterior">◀</button>
-            <button class="embed__btn embed__btn--play" id="embedPlay" aria-label="Play / Pausa">⏸</button>
-            <button class="embed__btn" id="embedNext" aria-label="Escena siguiente">▶</button>
-            <span class="embed__label" id="embedLabel">1/6</span>
-            <button class="embed__btn embed__voz" id="embedVoz">🔇 Sin voz</button>
-            <a class="embed__full" href="demo.html">⛶ Pantalla completa</a>
-          </div>
-        </div>
+    <!-- HOW YOU GET IT -->
+    <section class="wrap section" aria-labelledby="tienes-titulo">
+      <h2 class="h2" id="tienes-titulo">Cómo lo tienes</h2>
+      <div class="cards">
+        <div class="card"><span class="tag on">Para empezar</span><h3>Programa para tu PC</h3><p>Para Windows. Despierta el PC de noche, trabaja y lo deja descansar. Tu cuenta, tu conexión.</p></div>
+        <div class="card"><span class="tag">Opcional · +15 €/mes</span><h3>Búho-Box</h3><p>Un aparato pequeño junto a tu router, para si tu PC se apaga del todo por la noche. Desde el plan Starter.</p></div>
+        <div class="card"><span class="tag">Próximamente</span><h3>Extensión de Chrome</h3><p>Sin instalar nada más. Si te das de alta, te avisamos cuando esté lista.</p></div>
       </div>
     </section>
 
-    <!-- ===== Demo en MÓVIL: vídeo MP4 (nítido, con voz Álvaro). En escritorio se
-         oculta y se muestra el reproductor HTML de arriba (ver styles.css). ===== -->
-    <section class="section" id="ver-demo-mp4">
-      <div class="container">
-        <h2 class="section__title center">Míralo funcionando</h2>
-        <p class="section__subtitle center">
-          Una noche del búho, en un minuto. Toca el altavoz 🔊 para oír la explicación.
-        </p>
-        <!-- Wider than the default .embed (max-width:none -> fills the container) so
-             details are easier to see. autoplay+muted+loop: browsers only allow autoplay
-             when muted; the viewer taps the speaker icon to hear Álvaro. -->
-        <div class="embed" style="max-width: none;">
-          <video controls autoplay muted loop playsinline preload="auto"
-                 style="width:100%; aspect-ratio:16/9; display:block; border-radius:16px;
-                        border:1px solid var(--border); box-shadow:var(--shadow); background:#0b0d2b;">
-            <source src="demo/buho-demo.mp4" type="video/mp4" />
-          </video>
-        </div>
+    <!-- WHY WE EXIST -->
+    <section class="wrap" aria-label="Por qué existe BuhoStock">
+      <div class="founders">
+        <p class="big">Lo hicimos para nuestra propia tienda de electrónica. Ahora buscamos los primeros comercios.</p>
+        <p class="small">Las cifras de esta página salen de nuestras propias cuentas, no de clientes. Si empiezas ahora, el precio con el que entras se queda para siempre.</p>
       </div>
     </section>
 
-    <!-- ============ PROBLEMA: visible ≠ vendible ============ -->
-    <section class="section section--problem">
-      <div class="container narrow">
-        <h2 class="section__title">Tus productos se ven. Pero no se venden.</h2>
-        <p class="lead">
-          El truco del código postal te trae <strong>visitas</strong>. Pero
-          <strong>visible&nbsp;≠&nbsp;vendible</strong>. Refrescar un anuncio caro solo hace que
-          más gente vea que es caro. 😅
-        </p>
-        <p class="lead">
-          Lo que convierte una visita en una venta no es la visibilidad: es el
-          <strong>precio adecuado en el momento justo</strong>. Eso se llama <em>repricing</em>
-          — y es exactamente lo que hace Búho, cada noche, por ti.
-        </p>
+    <!-- PRICING -->
+    <section class="wrap section" id="precios" aria-labelledby="precios-titulo">
+      <div class="pricing-head">
+        <h2 class="h2" id="precios-titulo">Pagas según tus anuncios</h2>
+        <span class="mute">30 días gratis · luego al mes, sin permanencia</span>
+      </div>
+      <div class="picker">
+        <label for="num-anuncios">¿Cuántos anuncios tienes?</label>
+        <div class="picker-row">
+          <input id="num-anuncios" type="number" inputmode="numeric" min="1" max="100000" placeholder="p. ej. 120">
+          <output id="picker-out" for="num-anuncios" aria-live="polite"></output>
+        </div>
+      </div>
+      <div class="plans">
+        <div class="plan" data-max="50"><h3>Mini</h3><div class="limit">hasta 50 anuncios</div><div class="price">29<span class="eur">€</span><small> /mes</small></div></div>
+        <div class="plan" data-max="150"><h3>Starter</h3><div class="limit">hasta 150 anuncios</div><div class="price">49<span class="eur">€</span><small> /mes</small></div></div>
+        <div class="plan" data-max="400"><h3>Pro</h3><div class="limit">hasta 400 anuncios</div><div class="price">89<span class="eur">€</span><small> /mes</small></div></div>
+        <div class="plan" data-max="1000"><h3>Business</h3><div class="limit">hasta 1.000 anuncios</div><div class="price">149<span class="eur">€</span><small> /mes</small></div></div>
+      </div>
+      <ul class="price-notes">
+        <li>Los primeros 30 días son gratis y no te pedimos tarjeta.</li>
+        <li>Sin permanencia: cancelas o pausas cuando quieras.</li>
+        <li>Pago anual: 2 meses gratis.</li>
+        <li>Más de 1.000 anuncios: te hacemos un precio a medida.</li>
+        <li>Búho-Box: +15 €/mes, desde Starter, mínimo 6 meses.</li>
+        <li>Precio de lanzamiento: el que tienes al empezar se queda.</li>
+      </ul>
+    </section>
+
+    <!-- FAQ -->
+    <section class="wrap section" id="preguntas" aria-labelledby="faq-titulo">
+      <h2 class="h2" id="faq-titulo">Preguntas</h2>
+      <div class="faq">
+        <details>
+          <summary>¿Qué hace exactamente cada noche?</summary>
+          <p>Revisa tus anuncios uno por uno. Si alguno lleva días parado, le baja el precio un poco, sin pasar nunca del mínimo que tú fijas, y vuelve a subir los que llevan tiempo quietos para que salgan otra vez arriba. Por la mañana te llega un informe con lo que ha hecho y lo que se ha vendido.</p>
+        </details>
+        <details>
+          <summary>¿Tengo que dejar el ordenador encendido?</summary>
+          <p>Basta con dejarlo en reposo (suspensión). El programa lo despierta por la noche, trabaja y lo vuelve a dejar descansar. Si lo apagas del todo cada noche, para eso existe la Búho-Box.</p>
+        </details>
+        <details>
+          <summary>¿Me pedís la contraseña de mi cuenta?</summary>
+          <p>No. Inicias sesión tú, en tu propio ordenador. Nosotros no te pedimos ni guardamos tu contraseña, y si la cambias, Búho se queda fuera al momento.</p>
+        </details>
+        <details>
+          <summary>¿Para qué productos funciona?</summary>
+          <p>Empezamos con electrónica y lo que va con ella: móviles, informática, consolas y videojuegos, TV, audio y foto, electrodomésticos y herramientas eléctricas. Otras categorías, cuando las hayamos probado a fondo.</p>
+        </details>
+        <details>
+          <summary>¿Qué pasa cuando acaban los 30 días?</summary>
+          <p>Eliges el plan que te encaje o lo dejas. No te cobramos nada sin preguntarte antes.</p>
+        </details>
+        <details>
+          <summary>¿Cuándo voy a ver resultados?</summary>
+          <p>Depende de tu tienda y de tu stock, y no podemos prometerte cifras. Por eso miramos tu punto de partida antes de empezar: así puedes comparar con datos reales. En nuestras cuentas las ventas pasaron de unas 22 a unas 49 al mes desde que lo usamos, aunque no podemos asegurar que sea solo por eso.</p>
+        </details>
+        <details>
+          <summary>¿Quién me atiende?</summary>
+          <p>El equipo de BuhoStock, por correo o WhatsApp. Usamos un sistema automatizado supervisado por personas; si prefieres hablar con una persona, dínoslo y te lo organizamos.</p>
+        </details>
       </div>
     </section>
 
-    <!-- ============ CÓMO FUNCIONA (3 pasos) ============ -->
-    <section class="section" id="como-funciona">
-      <div class="container">
-        <h2 class="section__title center">Cómo funciona</h2>
-        <p class="section__subtitle center">Tres pasos. Tú mandas, el búho trabaja.</p>
-
-        <div class="steps">
-          <article class="step">
-            <div class="step__num">1</div>
-            <h3>Tú marcas las reglas</h3>
-            <p>
-              Un catálogo simple, como una hoja de cálculo. Para cada artículo pones tu
-              <strong>precio mínimo</strong> (de ahí no baja jamás) y marcas cuáles son tus
-              <strong>vacas lecheras</strong> intocables.
-            </p>
-          </article>
-
-          <article class="step">
-            <div class="step__num">2</div>
-            <h3>El búho trabaja de noche</h3>
-            <p>
-              Baja los precios poco a poco hacia tu mínimo, <strong>uno a uno y a ritmo
-              humano</strong>. Nunca por debajo de tu mínimo. Tus vacas lecheras se quedan
-              intactas. Tú no tocas nada.
-            </p>
-          </article>
-
-          <article class="step">
-            <div class="step__num">3</div>
-            <h3>Cada mañana, tu informe</h3>
-            <p>
-              Recibes en el móvil qué se vendió esta noche y por cuánto, qué precios se
-              ajustaron y qué quedó protegido. El <strong>parte diario</strong>, sin madrugar.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ MÁS QUE BAJAR PRECIOS (valor de negocio) ============ -->
-    <section class="section section--value" id="valor">
-      <div class="container">
-        <h2 class="section__title center">Búho no solo baja precios. Trabaja tu negocio entero.</h2>
-        <p class="section__subtitle center">
-          Bajar precios es lo que hace. Esto es lo que consigues.
-        </p>
-
-        <div class="features">
-          <div class="feature">
-            <span class="feature__icon">🌙</span>
-            <h3>Vende mientras duermes</h3>
-            <p>Tu tienda no cierra nunca. El búho trabaja de noche, en fin de semana y en vacaciones. Tú descansas; tu stock se sigue moviendo.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">💸</span>
-            <h3>Convierte stock parado en dinero</h3>
-            <p>Lo que lleva semanas criando polvo vuelve a moverse. El búho transforma tiempo de almacén en caja — sin tocar lo que ya vende bien.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🎯</span>
-            <h3>Constante como ninguna persona</h3>
-            <p>Cada noche, sin saltarse ni uno, sin cansarse, sin distraerse. En nuestro propio negocio: 71 noches seguidas sin fallar una.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">⏱️</span>
-            <h3>Te devuelve tus horas</h3>
-            <p>Las horas que hoy pierdes bajando precios a mano vuelven a ti. Dedícalas a comprar, fotografiar y hacer crecer el negocio.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🛡️</span>
-            <h3>Protege tu margen</h3>
-            <p>Tu precio mínimo es sagrado y tus vacas lecheras ni las roza. Rota lo que está parado, no malvende lo que funciona.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">📊</span>
-            <h3>Control total, sin esfuerzo</h3>
-            <p>Tú marcas las reglas, el búho ejecuta y cada mañana te lo cuenta en un informe. Mandas tú, sin madrugar.</p>
-          </div>
+    <!-- SIGN-UP -->
+    <section class="wrap section" id="alta" aria-labelledby="alta-titulo">
+      <div class="signup">
+        <div class="signup-head">
+          <h2 class="h2" id="alta-titulo">Pruébalo 30 días gratis</h2>
+          <p class="lead">Déjanos tus datos y te escribimos para ponerlo en marcha contigo.</p>
+          <ol class="signup-steps">
+            <li>Te escribimos en menos de 48 horas (días laborables).</li>
+            <li>Vemos juntos tus anuncios y fijamos tus precios mínimos.</li>
+            <li>Instalas el programa y esa misma noche empieza a trabajar.</li>
+          </ol>
         </div>
 
-        <!-- Argumento estrella: el empleado que nunca duerme -->
-        <div class="proof-highlight proof-highlight--empleado">
-          <p>
-            🦉 <strong>Un empleado que nunca duerme — por una fracción del coste.</strong>
-            Búho hace el trabajo que haría una persona (o varias) gestionando precios cada noche:
-            <strong>sin sueldo, sin vacaciones, sin bajas y sin olvidarse de nada.</strong>
-            Por una tarifa plana al mes, no por una nómina.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ RESULTADOS / PRUEBA REAL ============ -->
-    <section class="section section--proof" id="resultados">
-      <div class="container">
-        <h2 class="section__title center">Datos reales de nuestro propio negocio</h2>
-        <p class="section__subtitle center">
-          Tres meses reales, dos cuentas a la vez, sin tocar nada a mano.
-        </p>
-
-        <div class="stats">
-          <div class="stat">
-            <span class="stat__num">71</span>
-            <span class="stat__label">noches seguidas trabajando</span>
-          </div>
-          <div class="stat">
-            <span class="stat__num">+18.000</span>
-            <span class="stat__label">productos gestionados de noche</span>
-          </div>
-          <div class="stat">
-            <span class="stat__num">574&nbsp;h</span>
-            <span class="stat__label">de trabajo — más que un empleado a jornada completa</span>
-          </div>
-          <div class="stat">
-            <span class="stat__num">2.706</span>
-            <span class="stat__label">resubidas automáticas en el momento justo</span>
-          </div>
-        </div>
-
-        <div class="proof-highlight">
-          <p>
-            📈 <strong>Desde que trabaja el búho, las ventas mensuales casi se duplicaron:
-            de ~22 a ~49 al mes.</strong> Mismo negocio, más rotación — y encima subió el ticket
-            medio, así que el ingreso creció aún más.
-          </p>
-        </div>
-
-        <p class="disclaimer">
-          Son datos reales de nuestras propias cuentas (2&nbsp;cuentas, ~3&nbsp;meses). No es una
-          promesa de resultados: cada negocio es distinto. Por eso los primeros
-          <strong>30&nbsp;días son gratis</strong> — para que lo veas en el tuyo, sin arriesgar nada.
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ POR QUÉ BÚHO (rejilla de ventajas) ============ -->
-    <section class="section" id="por-que">
-      <div class="container">
-        <h2 class="section__title center">Por qué Búho es distinto</h2>
-
-        <div class="features">
-          <div class="feature">
-            <span class="feature__icon">🎯</span>
-            <h3>Repricing de verdad</h3>
-            <p>No solo "que se vea más". Ajusta el precio para convertir visitas en ventas. Eso no lo hace ningún otro.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🛡️</span>
-            <h3>Tu precio mínimo, sagrado</h3>
-            <p>Tú decides el suelo de cada artículo. El búho nunca baja de ahí, pase lo que pase.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🐄</span>
-            <h3>Tus vacas lecheras, intactas</h3>
-            <p>Los productos que ya venden bien los marcas y el búho ni los toca.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🌙</span>
-            <h3>Ritmo humano, no una avalancha</h3>
-            <p>Una cuenta, una sesión, despacio y a horas irregulares. Vamos conservadores a propósito.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🏠</span>
-            <h3>Tu IP de casa</h3>
-            <p>Funciona a través de una cajita conectada a tu router, no desde un centro de datos raro.</p>
-          </div>
-          <div class="feature">
-            <span class="feature__icon">🔑</span>
-            <h3>Tu contraseña = tu interruptor</h3>
-            <p>Te conectas una vez tú mismo. Nosotros nunca guardamos tu contraseña. El control es tuyo siempre.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ COMPARATIVA vs alternativas ============ -->
-    <section class="section section--compare" id="comparativa">
-      <div class="container">
-        <h2 class="section__title center">Búho, comparado con lo que ya conoces</h2>
-        <p class="section__subtitle center">
-          Estas son tus opciones hoy — y dónde se queda corta cada una.
-        </p>
-
-        <div class="compare-wrap">
-          <table class="compare">
-            <thead>
-              <tr>
-                <th class="compare__feat"></th>
-                <th>A mano</th>
-                <th>Truco del código&nbsp;postal</th>
-                <th>Bots baratos</th>
-                <th class="compare__owl">🦉 Búho</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>Repricing de verdad (no solo "que se vea")</th>
-                <td class="c-mid">😓</td><td class="c-no">✕</td><td class="c-no">✕</td><td class="c-yes">✓</td>
-              </tr>
-              <tr>
-                <th>Respeta tu precio mínimo</th>
-                <td class="c-yes">✓</td><td class="c-dash">—</td><td class="c-no">✕</td><td class="c-yes">✓</td>
-              </tr>
-              <tr>
-                <th>Deja intactas tus vacas lecheras</th>
-                <td class="c-yes">✓</td><td class="c-dash">—</td><td class="c-no">✕</td><td class="c-yes">✓</td>
-              </tr>
-              <tr>
-                <th>Tu IP de casa (no un centro de datos)</th>
-                <td class="c-yes">✓</td><td class="c-yes">✓</td><td class="c-no">✕</td><td class="c-yes">✓</td>
-              </tr>
-              <tr>
-                <th>Informe cada mañana en tu móvil</th>
-                <td class="c-no">✕</td><td class="c-no">✕</td><td class="c-no">✕</td><td class="c-yes">✓</td>
-              </tr>
-              <tr>
-                <th>Ritmo humano (seguro para tu cuenta)</th>
-                <td class="c-dash">—</td><td class="c-dash">—</td><td class="c-no">✕</td><td class="c-yes">✓</td>
-              </tr>
-              <tr>
-                <th>Cero trabajo manual</th>
-                <td class="c-no">✕</td><td class="c-no">✕</td><td class="c-yes">✓</td><td class="c-yes">✓</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="disclaimer">
-          El truco del código postal trae visitas, no ventas. Los bots baratos van rápido, pero ponen tu cuenta
-          en riesgo. Búho es el único que hace <strong>repricing de verdad a ritmo seguro</strong>.
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ ¿PARA QUIÉN? ============ -->
-    <section class="section section--who">
-      <div class="container narrow center">
-        <h2 class="section__title center">¿Para quién es Búho?</h2>
-        <p class="lead">
-          Para el <strong>reseller profesional</strong> (autónomo o SL) con
-          <strong>200&nbsp;o más artículos activos</strong> en su tienda de segunda mano.
-        </p>
-        <p class="lead">
-          Herramientas, electrónica, móviles, moda, zapatillas, recambios, muebles…
-          si tienes mucho stock y poco tiempo, el búho es para ti.
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ CALCULADORA de ahorro de tiempo ============ -->
-    <section class="section section--calc" id="calculadora">
-      <div class="container narrow">
-        <h2 class="section__title center">¿Cuánto te cuesta hacerlo a mano?</h2>
-        <p class="section__subtitle center">
-          Mueve la barra hasta tu número de artículos. Cálculo aproximado, solo de tiempo — sin promesas de ventas.
-        </p>
-
-        <div class="calc">
-          <label class="calc__label" for="calcRange">
-            Tengo <strong><span id="calcCount">300</span></strong> artículos activos
-          </label>
-          <input type="range" id="calcRange" min="50" max="1500" step="10" value="300"
-                 class="calc__range" aria-label="Número de artículos" />
-
-          <div class="calc__out">
-            <div class="calc__card">
-              <span class="calc__num" id="calcHours">40 h</span>
-              <span class="calc__cap">al mes gestionando precios a mano</span>
+        <div>
+          <form class="form" id="signup-form" novalidate>
+            <div class="field">
+              <label for="f-nombre">Tu nombre o el de tu tienda</label>
+              <input id="f-nombre" name="nombre" type="text" autocomplete="organization" required maxlength="120">
+              <span class="error">Dinos cómo te llamas o cómo se llama tu tienda.</span>
             </div>
-            <div class="calc__card">
-              <span class="calc__num" id="calcDays">5 días</span>
-              <span class="calc__cap">de trabajo completo, cada mes</span>
+            <div class="field">
+              <label for="f-email">Correo electrónico</label>
+              <input id="f-email" name="email" type="email" inputmode="email" autocomplete="email" required maxlength="160" placeholder="tu@correo.es">
+              <span class="error">Revisa el correo, parece que falta algo.</span>
             </div>
-            <div class="calc__card calc__card--buho">
-              <span class="calc__num" id="calcPlan">149 €/mes</span>
-              <span class="calc__cap">Búho lo hace cada noche — se cubre con 2-3 ventas</span>
+            <div class="field">
+              <label for="f-perfil">Tu perfil de Wallapop</label>
+              <input id="f-perfil" name="perfil" type="text" inputmode="url" autocomplete="url" required maxlength="300" placeholder="Enlace o nombre de tu perfil">
+              <span class="hint">En la app: Perfil › Compartir perfil › Copiar enlace.</span>
+              <span class="error">Pega el enlace o escribe el nombre de tu perfil.</span>
             </div>
+            <div class="field">
+              <label for="f-anuncios">¿Cuántos anuncios tienes? <span class="opt">(aprox.)</span></label>
+              <select id="f-anuncios" name="anuncios">
+                <option value="">Elige una opción</option>
+                <option value="hasta 50">Hasta 50</option>
+                <option value="51-150">De 51 a 150</option>
+                <option value="151-400">De 151 a 400</option>
+                <option value="401-1000">De 401 a 1.000</option>
+                <option value="mas de 1000">Más de 1.000</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-whatsapp">WhatsApp <span class="opt">(opcional)</span></label>
+              <div class="prefix"><span>+34</span><input id="f-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="600 000 000"></div>
+              <span class="error">Revisa el número: 9 cifras.</span>
+            </div>
+            <div class="hp" aria-hidden="true">
+              <label for="f-web">No rellenes este campo</label>
+              <input id="f-web" name="web" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            <label class="check">
+              <input type="checkbox" name="novedades" value="si">
+              <span>Quiero recibir novedades de BuhoStock por correo. Te pediremos que lo confirmes y puedes darte de baja cuando quieras.</span>
+            </label>
+            <label class="check" id="check-condiciones">
+              <input type="checkbox" name="condiciones" value="si" required>
+              <span>He leído y acepto las <a href="condiciones.html" target="_blank" rel="noopener">condiciones de uso</a> y la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a>.</span>
+            </label>
+
+            <button class="btn btn-primary" type="submit" id="signup-submit">Quiero probarlo gratis</button>
+            <p class="form-status" id="form-status" role="alert"></p>
+          </form>
+
+          <div class="form-done" id="form-done" hidden tabindex="-1">
+            <h3>¡Recibido!</h3>
+            <p id="form-done-text">Te escribimos en menos de 48 horas (días laborables) para ponerlo en marcha contigo.</p>
+            <p id="form-done-optin" hidden>Te hemos enviado también un correo para confirmar que quieres recibir novedades.</p>
           </div>
-
-          <p class="calc__note">
-            Estimación: ~2 min por artículo y una revisión a fondo por semana. Tu caso puede variar;
-            por eso los primeros 30 días son gratis.
-          </p>
-        </div>
-
-        <div class="hero__cta center calc__cta">
-          <a href="#contacto" class="btn btn--wa btn--lg js-whatsapp">
-            <span aria-hidden="true">💬</span> Quiero recuperar esas horas
-          </a>
+          <noscript><p class="mute" style="margin-top:12px">Sin JavaScript el formulario no funciona. Escríbenos a buhostock.team@gmail.com y te contestamos.</p></noscript>
         </div>
       </div>
     </section>
-
-    <!-- ============ PRECIOS ============ -->
-    <section class="section section--pricing" id="precios">
-      <div class="container">
-        <h2 class="section__title center">Tarifa plana. Sin sorpresas.</h2>
-        <p class="section__subtitle center">
-          Precio fijo al mes, nunca por artículo. Pagas lo mismo tengas 180 o 500 productos dentro de tu plan.
-        </p>
-
-        <div class="pricing">
-          <article class="plan">
-            <h3 class="plan__name">Básico</h3>
-            <p class="plan__price"><span>149&nbsp;€</span>/mes</p>
-            <p class="plan__cap">hasta 200 artículos</p>
-            <a href="#contacto" class="btn btn--ghost js-whatsapp">Empezar gratis</a>
-          </article>
-
-          <article class="plan plan--featured">
-            <div class="plan__tag">El más elegido</div>
-            <h3 class="plan__name">Pro</h3>
-            <p class="plan__price"><span>249&nbsp;€</span>/mes</p>
-            <p class="plan__cap">hasta 500 artículos</p>
-            <a href="#contacto" class="btn btn--wa js-whatsapp">Empezar gratis</a>
-          </article>
-
-          <article class="plan">
-            <h3 class="plan__name">Business</h3>
-            <p class="plan__price"><span>349&nbsp;€</span>/mes</p>
-            <p class="plan__cap">hasta 1.000 artículos</p>
-            <a href="#contacto" class="btn btn--ghost js-whatsapp">Empezar gratis</a>
-          </article>
-        </div>
-
-        <p class="pricing__note">
-          💡 Con <strong>2-3 ventas extra al mes ya está pagado</strong>. Todo lo demás que vendas, es tuyo.<br />
-          Primeros 30 días gratis · Pago mes a mes · Cancela cuando quieras.
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ FAQ (acordeón nativo, sin JS) ============ -->
-    <section class="section" id="faq">
-      <div class="container narrow">
-        <h2 class="section__title center">Preguntas frecuentes</h2>
-
-        <details class="faq">
-          <summary>¿Esto no es solo el truco del código postal?</summary>
-          <p>
-            No. Ese truco hace UNA cosa: refrescar, para que tus anuncios se vean como nuevos.
-            Eso son visitas. El búho hace lo que el truco no puede: <strong>ajusta el precio</strong>
-            cuando algo lleva días parado, respeta tu mínimo, deja tus vacas lecheras en paz y te
-            manda un informe cada mañana. El truco trae visitas; el búho convierte esas visitas en compradores.
-          </p>
-        </details>
-
-        <details class="faq">
-          <summary>¿No es caro?</summary>
-          <p>
-            Míralo al revés: es lo que cuesta que alguien gestione tus precios cada noche, sin fallar
-            ni olvidarse. Con <strong>2-3 ventas de más al mes ya lo has cubierto</strong>, y es tarifa
-            plana. Piensa cuántas horas a la semana te llevaría bajar precios a mano, uno por uno.
-          </p>
-        </details>
-
-        <details class="faq">
-          <summary>¿Es seguro para mi cuenta?</summary>
-          <p>
-            Trabajamos a propósito distinto a un bot cutre: ritmo humano (una cuenta, una sesión,
-            despacio y a horas irregulares), tu IP de casa mediante la cajita del router, y tu
-            contraseña como interruptor — la cambias y quedamos fuera al instante.
-          </p>
-          <p>
-            Aun así, seamos claros: <strong>ninguna automatización es 100&nbsp;% sin riesgo</strong>, y la
-            responsabilidad última sobre tu cuenta es tuya. Justo por eso vamos conservadores y tú
-            mantienes el control en todo momento. Esto lo hablamos con calma antes de empezar.
-          </p>
-        </details>
-
-        <details class="faq">
-          <summary>¿Tengo que daros mi contraseña?</summary>
-          <p>
-            No. El bot corre en nuestro servidor y tú te conectas <strong>una sola vez tú mismo</strong>.
-            Nosotros no guardamos tus datos de acceso en ningún momento.
-          </p>
-        </details>
-
-        <details class="faq">
-          <summary>Ya bajo los precios yo mismo, ¿para qué lo quiero?</summary>
-          <p>
-            Perfecto, eso significa que ya sabes lo importante que es. La pregunta es cuántas horas a
-            la semana te come. El búho hace lo mismo cada noche, sin cansarse, sin saltarse ninguno y
-            sin bajar nunca de tu mínimo. Tú sigues mandando: pones las reglas y ves el informe cada mañana.
-          </p>
-        </details>
-
-        <details class="faq">
-          <summary>¿Cómo empiezo?</summary>
-          <p>
-            Escríbenos por WhatsApp. Empezamos con <strong>30 días gratis, sin firmar nada</strong>.
-            Antes medimos tu punto de partida (ventas de las últimas semanas) para que veas de verdad
-            si te sube el ritmo. A partir del día 31, tarifa plana por adelantado. Cancelas cuando quieras.
-          </p>
-        </details>
-      </div>
-    </section>
-
-    <!-- ============ CTA FINAL / CONTACTO ============ -->
-    <section class="section section--cta" id="contacto">
-      <div class="container narrow center">
-        <span class="cta__owl" aria-hidden="true">🦉</span>
-        <h2 class="section__title center">¿Hablamos?</h2>
-        <p class="lead">
-          Te enseño en un vídeo de 2 minutos cómo se vería esto en tu cuenta.
-          Sin compromiso — lo ves y ya me dices.
-        </p>
-        <div class="hero__cta center">
-          <a href="demo.html" class="btn btn--wa btn--lg">▶ Ver la demo (2 min)</a>
-          <a href="#contacto" class="btn btn--ghost btn--lg js-whatsapp">
-            <span aria-hidden="true">💬</span> Escríbenos por WhatsApp
-          </a>
-          <a href="#contacto" class="btn btn--ghost btn--lg js-email">✉️ Enviar un email</a>
-        </div>
-        <p class="cta__tag">El búho trabaja mientras duermes.</p>
-      </div>
-    </section>
-
   </main>
 
-  <!-- ============ PIE ============ -->
   <footer class="site-footer">
-    <div class="container footer__inner">
-      <div class="footer__brand">
-        <span class="brand__icon">🦉</span>
-        <strong>Búho</strong> · BuhoStock
-      </div>
-      <ul class="footer__links">
-        <li><a href="aviso-legal.html">Aviso legal</a></li>
-        <li><a href="politica-privacidad.html">Política de privacidad</a></li>
-        <li><a href="#faq">Preguntas frecuentes</a></li>
-        <li><a href="#contacto" class="js-whatsapp">Contacto</a></li>
-      </ul>
-      <p class="footer__copy">© <span id="year">2026</span> BuhoStock · Servicios de Internet</p>
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="assets/buho-icon.svg" alt="" width="28" height="28"><span>BuhoStock</span></a>
+      <nav aria-label="Legal y contacto">
+        <a class="js-email" href="mailto:buhostock.team@gmail.com">buhostock.team@gmail.com</a>
+        <a href="condiciones.html">Condiciones de uso</a>
+        <a href="privacidad.html">Privacidad</a>
+      </nav>
+      <p class="legal">© 2026 BuhoStock. BuhoStock es una herramienta independiente, no está afiliada a Wallapop ni cuenta con su respaldo.</p>
     </div>
   </footer>
 
-  <!-- ============ Reproductor incrustado (autoplay mudo, voz opcional) ============ -->
-  <script>
-    // Se define aquí y lo arranca la puerta PIN al desbloquear.
-    window.startBuhoEmbed = function () {
-      var wrap = document.getElementById("embedWrap");
-      if (!wrap || wrap.dataset.started) return;
-      wrap.dataset.started = "1";
-
-      var SPEED = 0.6;   // < 1 = más rápido (una sola cifra para ajustar el ritmo).
-      var SCENES = [
-        { f: "demo/szenen/szene0-intro.html",         d: 9 },
-        { f: "demo/szenen/szene1-catalogo.html",      d: 31 },
-        { f: "demo/szenen/szene2-noche.html",         d: 33 },
-        { f: "demo/szenen/szene3-telegram.html",      d: 31 },
-        { f: "demo/szenen/szene4-antes-despues.html", d: 19 },
-        { f: "demo/szenen/szene5-outro.html",         d: 7 }
-      ];
-      var frame = document.getElementById("embedFrame");
-      var stageWrap = document.getElementById("embedFrameWrap");
-      var playBtn = document.getElementById("embedPlay");
-      var vozBtn = document.getElementById("embedVoz");
-      var label = document.getElementById("embedLabel");
-      var idx = 0, playing = true, voz = false, timer = null;
-      // Track remaining time for true pause/resume (no iframe reload on play).
-      var sceneStart = 0, sceneRemaining = 0;
-      // Helper to send postMessage commands to the scene iframe.
-      function post(t) { try { frame.contentWindow.postMessage({ type: t }, "*"); } catch (e) {} }
-
-      function url(i) { return SCENES[i].f + "?spd=" + SPEED + (voz ? "&voz=1" : ""); }
-      function clearTimer() { if (timer) { clearTimeout(timer); timer = null; } }
-      function schedule() {
-        clearTimer();
-        if (!playing) return;
-        // Record when this scene started and how long it should run at current speed.
-        sceneStart = Date.now();
-        sceneRemaining = SCENES[idx].d * SPEED * 1000;
-        timer = setTimeout(function () { go(idx + 1 < SCENES.length ? idx + 1 : 0); }, sceneRemaining);
-      }
-      // Cancel any running speech when changing scenes.
-      function go(i) { try { window.speechSynthesis.cancel(); } catch (e) {} idx = (i + SCENES.length) % SCENES.length; frame.src = url(idx); ui(); }
-      function ui() {
-        if (label) label.textContent = (idx + 1) + "/" + SCENES.length;
-        if (playBtn) playBtn.textContent = playing ? "⏸" : "▶";
-      }
-      frame.addEventListener("load", schedule);
-
-      // BUG 1 FIX: Pause freezes the iframe via postMessage; Resume continues at the exact
-      // position without reloading the iframe (previously a reload caused a full restart).
-      playBtn.addEventListener("click", function () {
-        if (playing) {
-          playing = false;
-          // Save how much time was still left for this scene.
-          if (timer) { clearTimeout(timer); timer = null; sceneRemaining -= (Date.now() - sceneStart); }
-          post("buho-pause");   // freeze the scene's internal timers and CSS animations
-          if (voz) { try { window.speechSynthesis.pause(); } catch (e) {} }
-        } else {
-          playing = true;
-          post("buho-resume");  // unfreeze the scene
-          if (voz) { try { window.speechSynthesis.resume(); } catch (e) {} }
-          // Resume the outer scene-switch timer from where it was paused.
-          sceneStart = Date.now();
-          timer = setTimeout(function () { go(idx + 1 < SCENES.length ? idx + 1 : 0); }, Math.max(0, sceneRemaining));
-        }
-        ui();
-      });
-      // BUG 2 FIX: Warm-up speak() inside the voz button's gesture context to unlock
-      // audio on mobile. The actual speech is done by the parent-side message listener.
-      vozBtn.addEventListener("click", function () {
-        voz = !voz;
-        vozBtn.textContent = voz ? "🔊 Con voz" : "🔇 Sin voz";
-        vozBtn.classList.toggle("on", voz);
-        try {
-          window.speechSynthesis.cancel();
-          if (voz) {
-            // Silent warm-up utterance inside the user gesture -> unlocks audio on iOS/Android.
-            var warm = new SpeechSynthesisUtterance(" "); warm.volume = 0;
-            window.speechSynthesis.speak(warm);
-          }
-        } catch (e) {}
-        frame.src = url(idx);   // reload to pass the ?voz=1 flag to the scene
-      });
-      document.getElementById("embedPrev").addEventListener("click", function () { go(idx - 1); });
-      document.getElementById("embedNext").addEventListener("click", function () { go(idx + 1); });
-
-      // Cache the best Spanish voice. Voices load asynchronously (often empty on the
-      // first call, especially on mobile), so we refresh the pick when the browser
-      // fires "voiceschanged". Preferring "Google es-ES" makes the mobile voice match
-      // the higher-quality desktop Chrome voice instead of the robotic system default.
-      var _bestVoice = null;
-      function buhoPickVoice() {
-        var vs = window.speechSynthesis.getVoices() || [];
-        var es = vs.filter(function (v) { return /^es([-_]|$)/i.test(v.lang); });
-        if (!es.length) { _bestVoice = null; return; }
-        var prefs = [
-          function (v) { return /google/i.test(v.name) && /es[-_]es/i.test(v.lang); }, // = desktop Chrome
-          function (v) { return /google/i.test(v.name); },
-          function (v) { return /microsoft/i.test(v.name) && /es[-_]es/i.test(v.lang); },
-          function (v) { return /es[-_]es/i.test(v.lang); },                            // Spain Spanish
-          function () { return true; }
-        ];
-        for (var p = 0; p < prefs.length; p++) { var m = es.filter(prefs[p]); if (m.length) { _bestVoice = m[0]; return; } }
-        _bestVoice = es[0];
-      }
-      try { buhoPickVoice(); window.speechSynthesis.onvoiceschanged = buhoPickVoice; } catch (e) {}
-
-      // BUG 2 FIX: Receive subtitle text from the scene iframe and speak it here (parent page),
-      // where the original user gesture (vozBtn click) already unlocked the audio context.
-      window.addEventListener("message", function (e) {
-        var d = e.data || {};
-        if (d.type === "buho-say" && voz) {
-          try {
-            if (!_bestVoice) buhoPickVoice();   // last-chance pick if voices just arrived
-            var u = new SpeechSynthesisUtterance(d.text);
-            u.lang = "es-ES"; u.rate = 1; u.pitch = 1;
-            if (_bestVoice) u.voice = _bestVoice;
-            window.speechSynthesis.speak(u);
-          } catch (e2) {}
-        }
-      });
-
-      // Escalar el iframe de 1920x1080 al ancho real del contenedor.
-      // Keep the 1920x1080 iframe scaled to the container. ResizeObserver reacts to ANY
-      // size change (rotation, mobile toolbar) — unlike "resize", which iOS Safari fires
-      // unreliably; that is why the embedded video did not resize on mobile before.
-      function fit() { var w = stageWrap.clientWidth; frame.style.transform = "scale(" + (w / 1920) + ")"; }
-      if (window.ResizeObserver) { new ResizeObserver(fit).observe(stageWrap); }
-      else { window.addEventListener("resize", fit); window.addEventListener("orientationchange", function () { setTimeout(fit, 250); }); }
-      fit();
-      go(0);
-    };
-  </script>
-
-  <!-- ============ Lógica de la puerta PIN (preview privada) ============ -->
-  <script>
-    (function () {
-      // SHA-256 del PIN. El PIN en claro NO está en el código.
-      var PIN_HASH = "b62ae2df8a426804bc7c58955ceeb977e240a0727ae0018eb62a6c637ab5b135";
-      var gate = document.getElementById("pinGate");
-      if (!gate) return;
-
-      function boot() { gate.remove(); if (window.startBuhoEmbed) window.startBuhoEmbed(); }
-
-      // Si ya se validó en esta sesión, quitar la puerta y arrancar el reproductor.
-      if (sessionStorage.getItem("buho_ok") === "1") { boot(); return; }
-
-      var form = document.getElementById("pinForm");
-      var input = document.getElementById("pinInput");
-      var error = document.getElementById("pinError");
-
-      // Calcula el SHA-256 de un texto usando la Web Crypto API (necesita https).
-      async function sha256Hex(text) {
-        var data = new TextEncoder().encode(text);
-        var buf = await crypto.subtle.digest("SHA-256", data);
-        return Array.from(new Uint8Array(buf))
-          .map(function (b) { return b.toString(16).padStart(2, "0"); })
-          .join("");
-      }
-
-      form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        // Se ignoran mayúsculas/minúsculas para que sea más fácil.
-        var value = (input.value || "").trim().toUpperCase();
-        var hash = await sha256Hex(value);
-        if (hash === PIN_HASH) {
-          sessionStorage.setItem("buho_ok", "1");
-          boot();
-        } else {
-          error.hidden = false;
-          input.value = "";
-          input.focus();
-        }
-      });
-
-      input.focus();
-    })();
-  </script>
-
-  <script src="script.js"></script>
+  <div class="sticky-cta" id="sticky-cta">
+    <a class="btn btn-primary" href="#alta">Quiero probarlo · 30 días gratis</a>
+  </div>
 </body>
 </html>
