@@ -5,7 +5,7 @@ window.BUHO_CONFIG = {
   // URL of the deployed Google Apps Script web app (ends with /exec).
   // Empty = the form falls back to opening a prefilled e-mail to CONTACT_EMAIL.
   // How to create it: grok-bot-opensource/website-entwurf/apps-script/EINRICHTEN.md (KI-Firma repo)
-  APPS_SCRIPT_URL: "",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyFOhuyCdO1FHsrQSxMrLnsa8YDxTlvDU3f7fAVBSS_I-pTWg8ivoXxe686uX54_uLw/exec",
 
   // Public contact address shown on the page and used by the fallback.
   // Switch to hola@buhostock.com once the domain forwarding is confirmed (F-6).

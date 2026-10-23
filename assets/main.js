@@ -8,6 +8,39 @@
 
   var config = window.BUHO_CONFIG || {};
 
+  /* Texts the script writes into the page, per language (<html lang="..">). */
+  var STRINGS = {
+    es: {
+      yourPlan: "Tu plan: ", custom: "Más de 1.000: te hacemos un precio a medida.",
+      acceptTerms: "Para seguir, acepta las condiciones de uso.", checkFields: "Revisa los campos marcados.",
+      sending: "Enviando…", submit: "Quiero probarlo gratis",
+      sendError: "No hemos podido enviarlo. Revisa tu conexión o escríbenos a ",
+      mailOpened: "Se ha abierto tu programa de correo con tus datos. Envía el mensaje y te escribimos en menos de 48 horas (días laborables).",
+      mailSubject: "Quiero probar BuhoStock", mailIntro: "Hola, quiero probar BuhoStock.",
+      labels: ["Nombre / tienda", "Correo", "Perfil de Wallapop", "Anuncios", "WhatsApp", "Novedades por correo", "Condiciones aceptadas", "versión"],
+    },
+    en: {
+      yourPlan: "Your plan: ", custom: "More than 1,000: we'll make you a custom price.",
+      acceptTerms: "To continue, please accept the terms of use.", checkFields: "Please check the highlighted fields.",
+      sending: "Sending…", submit: "Try it for free",
+      sendError: "We couldn't send it. Check your connection or write to us at ",
+      mailOpened: "Your e-mail program has opened with your details. Send the message and we'll get back to you within 48 hours (working days).",
+      mailSubject: "I want to try BuhoStock", mailIntro: "Hello, I want to try BuhoStock.",
+      labels: ["Name / shop", "E-mail", "Wallapop profile", "Listings", "WhatsApp", "News by e-mail", "Terms accepted", "version"],
+    },
+    de: {
+      yourPlan: "Dein Plan: ", custom: "Mehr als 1.000: Wir machen dir einen individuellen Preis.",
+      acceptTerms: "Bitte akzeptiere die Nutzungsbedingungen, um fortzufahren.", checkFields: "Bitte prüfe die markierten Felder.",
+      sending: "Wird gesendet …", submit: "Gratis testen",
+      sendError: "Senden hat nicht geklappt. Prüfe deine Verbindung oder schreib uns an ",
+      mailOpened: "Dein E-Mail-Programm hat sich mit deinen Daten geöffnet. Schick die Nachricht ab, wir melden uns innerhalb von 48 Stunden (Werktage).",
+      mailSubject: "Ich möchte BuhoStock testen", mailIntro: "Hallo, ich möchte BuhoStock testen.",
+      labels: ["Name / Shop", "E-Mail", "Wallapop-Profil", "Anzeigen", "WhatsApp", "Neuigkeiten per E-Mail", "Bedingungen akzeptiert", "Version"],
+    },
+  };
+  var lang = (document.documentElement.lang || "es").slice(0, 2);
+  var text = STRINGS[lang] || STRINGS.es;
+
   /** Add a border under the sticky header once the page is scrolled. */
   function setupHeader() {
     var header = document.querySelector(".site-header");
@@ -43,9 +76,9 @@
       var match = plans.find(function (plan) { return count <= Number(plan.dataset.max); });
       if (match) {
         match.classList.add("is-match");
-        output.textContent = "Tu plan: " + match.querySelector("h3").textContent + ".";
+        output.textContent = text.yourPlan + match.querySelector("h3").textContent + ".";
       } else {
-        output.textContent = "Más de 1.000: te hacemos un precio a medida.";
+        output.textContent = text.custom;
       }
     });
   }
@@ -113,24 +146,26 @@
       web: form.elements.web.value,               // honeypot, must stay empty
       segundos: String(Math.round((Date.now() - startedAt) / 1000)),
       pagina: location.href.split("#")[0],
+      idioma: lang,
     };
   }
 
   /** Fallback while no Apps Script URL is configured: open a prefilled e-mail. */
   function sendByEmail(data) {
+    var label = text.labels;
     var body = [
-      "Hola, quiero probar BuhoStock.",
+      text.mailIntro,
       "",
-      "Nombre / tienda: " + data.nombre,
-      "Correo: " + data.email,
-      "Perfil de Wallapop: " + data.perfil,
-      "Anuncios: " + (data.anuncios || "-"),
-      "WhatsApp: " + (data.whatsapp ? "+34 " + data.whatsapp : "-"),
-      "Novedades por correo: " + data.novedades,
-      "Condiciones aceptadas: " + data.condiciones + " (versión " + data.condiciones_version + ")",
+      label[0] + ": " + data.nombre,
+      label[1] + ": " + data.email,
+      label[2] + ": " + data.perfil,
+      label[3] + ": " + (data.anuncios || "-"),
+      label[4] + ": " + (data.whatsapp ? "+34 " + data.whatsapp : "-"),
+      label[5] + ": " + data.novedades,
+      label[6] + ": " + data.condiciones + " (" + label[7] + " " + data.condiciones_version + ", " + data.idioma + ")",
     ].join("\n");
     location.href = "mailto:" + (config.CONTACT_EMAIL || "") +
-      "?subject=" + encodeURIComponent("Quiero probar BuhoStock") +
+      "?subject=" + encodeURIComponent(text.mailSubject) +
       "&body=" + encodeURIComponent(body);
   }
 
@@ -151,10 +186,10 @@
   /** Replace the form with the thank-you box. */
   function showDone(form, data, viaEmail) {
     var done = document.getElementById("form-done");
-    var text = document.getElementById("form-done-text");
+    var doneText = document.getElementById("form-done-text");
     var optin = document.getElementById("form-done-optin");
     if (viaEmail) {
-      text.textContent = "Se ha abierto tu programa de correo con tus datos. Envía el mensaje y te escribimos en menos de 48 horas (días laborables).";
+      doneText.textContent = text.mailOpened;
     }
     optin.hidden = viaEmail || data.novedades !== "si";
     form.hidden = true;
@@ -185,8 +220,8 @@
       var firstInvalid = validateForm(form);
       if (firstInvalid) {
         status.textContent = firstInvalid.name === "condiciones"
-          ? "Para seguir, acepta las condiciones de uso."
-          : "Revisa los campos marcados.";
+          ? text.acceptTerms
+          : text.checkFields;
         firstInvalid.focus();
         return;
       }
@@ -197,13 +232,13 @@
       if (!config.APPS_SCRIPT_URL) { sendByEmail(data); showDone(form, data, true); return; }
 
       button.disabled = true;
-      button.textContent = "Enviando…";
+      button.textContent = text.sending;
       sendToAppsScript(data)
         .then(function () { showDone(form, data, false); })
         .catch(function () {
-          status.textContent = "No hemos podido enviarlo. Revisa tu conexión o escríbenos a " + (config.CONTACT_EMAIL || "nuestro correo") + ".";
+          status.textContent = text.sendError + (config.CONTACT_EMAIL || "") + ".";
           button.disabled = false;
-          button.textContent = "Quiero probarlo gratis";
+          button.textContent = text.submit;
         });
     });
   }

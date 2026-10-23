@@ -77,7 +77,7 @@ img, svg { display: block; max-width: 100%; }
 [hidden] { display: none !important; }   /* components with display:flex must still hide */
 a { color: var(--amber); }
 a:hover { color: var(--amber-hover); }
-h1, h2, h3 { margin: 0; line-height: 1.05; letter-spacing: -0.025em; }
+h1, h2, h3 { margin: 0; line-height: 1.05; letter-spacing: -0.025em; overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; }
 p { margin: 0; }
 :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
 
@@ -115,6 +115,16 @@ p { margin: 0; }
 .nav a { color: var(--text-soft); text-decoration: none; }
 .nav a:hover { color: var(--text); }
 @media (min-width: 900px) { .nav { display: flex; } }
+.header-actions { display: flex; align-items: center; gap: 14px; }
+
+/* Language switch (ES / EN / DE) */
+.lang { display: flex; gap: 2px; font-family: var(--mono); font-size: 13px; }
+.lang a { color: var(--text-mute); text-decoration: none; padding: 10px 6px; min-width: 32px; text-align: center; border-radius: 6px; }
+.lang a:hover { color: var(--text); }
+.lang a[aria-current="true"] { color: var(--text); background: var(--night-2); }
+/* Very small phones: the hero CTA and the sticky CTA cover sign-up, so the header keeps logo + language only */
+@media (max-width: 419px) { .site-header .btn-small { display: none; } }
+.lang-note { font-size: 14px; color: var(--text-mute); }
 
 /* ---------- Hero ---------- */
 .hero { padding-top: 40px; display: grid; gap: 48px; align-items: center; }
@@ -216,6 +226,8 @@ p { margin: 0; }
 .plan .price small { font-family: var(--font); font-size: 15px; font-weight: 400; color: var(--text-mute); }
 .plan.is-match { border-top: 2px solid var(--amber); padding-top: 15px; }
 .plan.is-match h3::after { content: " · el tuyo"; color: var(--amber); font-weight: 500; }
+html[lang="en"] .plan.is-match h3::after { content: " · yours"; }
+html[lang="de"] .plan.is-match h3::after { content: " · deiner"; }
 @media (min-width: 760px) { .plans { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; } }
 .price-notes { margin: 28px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 15px; color: var(--text-soft); }
 .price-notes li::before { content: "—  "; color: var(--text-mute); }
