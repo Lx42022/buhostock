@@ -128,6 +128,10 @@ INDEX: list[tuple[str, str, str]] = [
     ('<span class="tag">Próximamente</span><h3>Extensión de Chrome</h3><p>Sin instalar nada más. Si te das de alta, te avisamos cuando esté lista.</p>',
      "<span class=\"tag\">Coming soon</span><h3>Chrome extension</h3><p>Nothing else to install. Sign up and we'll let you know when it's ready.</p>",
      '<span class="tag">Bald verfügbar</span><h3>Chrome-Erweiterung</h3><p>Ohne weitere Installation. Wenn du dich anmeldest, sagen wir dir Bescheid, sobald sie fertig ist.</p>'),
+    # coming soon: scanner / stock tool (Lx 26.10.2026)
+    ('<span class="tag">Próximamente</span><h3>BuhoStock Almacén</h3><p>Escáner y control de stock y palets para revendedores. Funciona con tu móvil: escaneas con la cámara y listo.</p>',
+     '<span class="tag">Coming soon</span><h3>BuhoStock Almacén</h3><p>Scanner and stock and pallet tracking for resellers. Works with your phone: scan with the camera and you\'re done.</p>',
+     '<span class="tag">Bald verfügbar</span><h3>BuhoStock Almacén</h3><p>Scanner und Lager- und Palettenverwaltung für Wiederverkäufer. Funktioniert mit deinem Handy: mit der Kamera scannen, fertig.</p>'),
     # founders
     ('aria-label="Por qué existe BuhoStock"', 'aria-label="Why BuhoStock exists"', 'aria-label="Warum es BuhoStock gibt"'),
     ("Lo hicimos para nuestra propia tienda de electrónica. Ahora buscamos los primeros comercios.",
