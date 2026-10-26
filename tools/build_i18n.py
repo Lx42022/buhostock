@@ -82,6 +82,10 @@ INDEX: list[tuple[str, str, str]] = [
     ("Nuestras 2 cuentas de electrónica, abril–octubre 2026 (descansa los domingos; renovación automática desde septiembre; ventas dic–mar frente a may–jun). Correlación, no garantía.",
      "Our 2 electronics accounts, April–October 2026 (Sundays off; automatic relisting since September; sales Dec–Mar vs. May–Jun). Correlation, not a guarantee.",
      "Unsere 2 Elektronik-Konten, April–Oktober 2026 (sonntags Pause; automatisches Neu-Einstellen seit September; Verkäufe Dez–Mär gegenüber Mai–Jun). Zusammenhang, keine Garantie."),
+    # saved manual work (Lx decision 24.10.2026, PROOF_SHEET_ES.md E3)
+    ("<strong>Más de 800 horas de trabajo manual ahorradas: unas 100 jornadas completas.</strong> (Cálculo: 1 minuto por cambio de precio y 10 minutos por anuncio renovado, desde el 31 de marzo de 2026.)",
+     "<strong>More than 800 hours of manual work saved: about 100 full working days.</strong> (Calculation: 1 minute per price change and 10 minutes per relisted listing, since 31 March 2026.)",
+     "<strong>Über 800 Stunden Handarbeit gespart: rund 100 volle Arbeitstage.</strong> (Berechnung: 1 Minute pro Preisänderung und 10 Minuten pro neu eingestellter Anzeige, seit dem 31. März 2026.)"),
     # one night
     ("Una noche de trabajo, mientras tú descansas", "A night's work while you rest", "Eine Nacht Arbeit, während du dich ausruhst"),
     ("<h3>Arranca solo</h3><p>El programa despierta tu PC y abre tu cuenta.</p>",
@@ -196,6 +200,12 @@ INDEX: list[tuple[str, str, str]] = [
     ("En la app: Perfil › Compartir perfil › Copiar enlace.", "In the app: Profile › Share profile › Copy link.", "In der App: Profil › Profil teilen › Link kopieren."),
     ("Pega el enlace o escribe el nombre de tu perfil.", "Paste the link or type your profile name.", "Füge den Link ein oder schreib deinen Profilnamen."),
     (">Elige una opción<", ">Choose an option<", ">Bitte wählen<"),
+    # night-PC question (Lx 24.10.2026)
+    ("¿Tienes un PC con Windows encendido por la noche?", "Do you have a Windows PC that is switched on at night?", "Hast du nachts einen eingeschalteten Windows-PC?"),
+    (">Sí, Windows<", ">Yes, Windows<", ">Ja, Windows<"),
+    (">Tengo Mac<", ">I have a Mac<", ">Ich habe einen Mac<"),
+    (">No tengo PC encendido por la noche<", ">I have no PC switched on at night<", ">Ich habe nachts keinen eingeschalteten PC<"),
+    ("Elige una de las opciones.", "Please choose one of the options.", "Bitte wähle eine der Optionen."),
     (">Hasta 50<", ">Up to 50<", ">Bis 50<"),
     (">De 51 a 150<", ">51 to 150<", ">51 bis 150<"),
     (">De 151 a 400<", ">151 to 400<", ">151 bis 400<"),
@@ -302,9 +312,9 @@ PRIVACIDAD: list[tuple[str, str, str]] = [
      "BuhoStock. You can write to us about any privacy matter at",
      "BuhoStock. Für alle Datenschutzfragen erreichst du uns unter"),
     ("2. Qué datos recogemos", "2. What data we collect", "2. Welche Daten wir erheben"),
-    ("Solo los que nos das en el formulario «Pruébalo 30 días gratis»: tu nombre o el de tu tienda, tu correo, tu perfil de Wallapop, el número aproximado de anuncios y, si quieres, tu WhatsApp. Guardamos también la fecha del alta y la versión de las condiciones que aceptaste.",
-     "Only what you give us in the “Try it free for 30 days” form: your name or your shop's name, your e-mail, your Wallapop profile, the approximate number of listings and, if you like, your WhatsApp. We also store the date of sign-up and the version of the terms you accepted.",
-     "Nur die Angaben aus dem Formular „30 Tage gratis testen“: deinen Namen oder den deines Shops, deine E-Mail, dein Wallapop-Profil, die ungefähre Anzahl deiner Anzeigen und, wenn du willst, deine WhatsApp-Nummer. Außerdem speichern wir das Anmeldedatum und die Version der akzeptierten Bedingungen."),
+    ("Solo los que nos das en el formulario «Pruébalo 30 días gratis»: tu nombre o el de tu tienda, tu correo, tu perfil de Wallapop, el número aproximado de anuncios, si tienes un PC con Windows encendido por la noche y, si quieres, tu WhatsApp. Guardamos también la fecha del alta y la versión de las condiciones que aceptaste.",
+     "Only what you give us in the “Try it free for 30 days” form: your name or your shop's name, your e-mail, your Wallapop profile, the approximate number of listings, whether you have a Windows PC switched on at night and, if you like, your WhatsApp. We also store the date of sign-up and the version of the terms you accepted.",
+     "Nur die Angaben aus dem Formular „30 Tage gratis testen“: deinen Namen oder den deines Shops, deine E-Mail, dein Wallapop-Profil, die ungefähre Anzahl deiner Anzeigen, ob du nachts einen eingeschalteten Windows-PC hast und, wenn du willst, deine WhatsApp-Nummer. Außerdem speichern wir das Anmeldedatum und die Version der akzeptierten Bedingungen."),
     ("Esta web no usa cookies, ni herramientas de analítica, ni publicidad. Las fuentes tipográficas están alojadas en nuestro propio servidor.",
      "This website uses no cookies, no analytics tools and no advertising. The fonts are hosted on our own server.",
      "Diese Website verwendet keine Cookies, keine Analyse-Werkzeuge und keine Werbung. Die Schriften liegen auf unserem eigenen Server."),
@@ -379,7 +389,12 @@ def build_page(page: str, code: str) -> list[str]:
     html = html.replace('<html lang="es">', f'<html lang="{code}">', 1)
     html = html.replace('content="es_ES"', f'content="{settings["locale"]}"')
     html = html.replace('href="assets/', 'href="../assets/').replace('src="assets/', 'src="../assets/')
-    html = re.sub(r'<nav class="lang".*?</nav>', language_switch(page, code, settings["nav"]), html, count=1, flags=re.S)
+    # F-13 (Lx 24.10.2026): no language switch anywhere, translations only by direct link,
+    # hidden from search engines. To bring the switch back: put the nav.lang into the
+    # Spanish pages and use language_switch(...) instead of the empty string below.
+    html = re.sub(r'<nav class="lang".*?</nav>', "", html, count=1, flags=re.S)
+    html = re.sub(r'[ \t]*<link rel="alternate" hreflang="[^"]*" href="[^"]*">\r?\n', "", html)
+    html = html.replace('<meta name="viewport"', '<meta name="robots" content="noindex">\n  <meta name="viewport"', 1)
     target = ROOT / code / page
     target.parent.mkdir(exist_ok=True)
     target.write_text(html, encoding="utf-8")

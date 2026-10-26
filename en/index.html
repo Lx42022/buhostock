@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>BuhoStock · Your Wallapop listings back on top every night</title>
   <meta name="description" content="BuhoStock relists your Wallapop listings every night, lowers the price of what isn't selling step by step down to your minimum and sends you a report every morning. 30 days free, no commitment.">
@@ -10,10 +11,6 @@
   <meta property="og:title" content="BuhoStock · While you sleep, your listings go back to the top">
   <meta property="og:description" content="Relists your listings every night, adjusts prices without going below your minimum and sends you the report in the morning. 30 days free.">
   <meta property="og:locale" content="en_GB">
-  <link rel="alternate" hreflang="es" href="https://lx42022.github.io/buhostock/">
-  <link rel="alternate" hreflang="en" href="https://lx42022.github.io/buhostock/en/">
-  <link rel="alternate" hreflang="de" href="https://lx42022.github.io/buhostock/de/">
-  <link rel="alternate" hreflang="x-default" href="https://lx42022.github.io/buhostock/">
   <link rel="icon" href="../assets/buho-icon.svg" type="image/svg+xml">
   <link rel="preload" href="../assets/fonts/schibsted-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/styles.css">
@@ -35,7 +32,7 @@
         <a href="#precios">Pricing</a>
         <a href="#preguntas">FAQ</a>
       </nav>
-      <div class="header-actions"><nav class="lang" aria-label="Language"><a href="../index.html" hreflang="es" lang="es">ES</a><a href="index.html" hreflang="en" lang="en" aria-current="true">EN</a><a href="../de/index.html" hreflang="de" lang="de">DE</a></nav><a class="btn btn-primary btn-small" href="#alta">Try it free</a></div>
+      <div class="header-actions"><a class="btn btn-primary btn-small" href="#alta">Try it free</a></div>
     </div>
   </header>
 
@@ -83,6 +80,7 @@
         <div class="stat"><b>22 → 49</b><span>sales per month since we started using it</span></div>
       </div>
       <p class="stats-source">Our 2 electronics accounts, April–October 2026 (Sundays off; automatic relisting since September; sales Dec–Mar vs. May–Jun). Correlation, not a guarantee.</p>
+      <p class="stats-source"><strong>More than 800 hours of manual work saved: about 100 full working days.</strong> (Calculation: 1 minute per price change and 10 minutes per relisted listing, since 31 March 2026.)</p>
     </section>
 
     <!-- ONE NIGHT -->
@@ -235,6 +233,16 @@
                 <option value="401-1000">401 to 1,000</option>
                 <option value="mas de 1000">More than 1,000</option>
               </select>
+            </div>
+            <div class="field">
+              <label for="f-pc-noche">Do you have a Windows PC that is switched on at night?</label>
+              <select id="f-pc-noche" name="pc_noche" required>
+                <option value="">Choose an option</option>
+                <option value="windows">Yes, Windows</option>
+                <option value="mac">I have a Mac</option>
+                <option value="no">I have no PC switched on at night</option>
+              </select>
+              <span class="error">Please choose one of the options.</span>
             </div>
             <div class="field">
               <label for="f-whatsapp">WhatsApp <span class="opt">(optional)</span></label>

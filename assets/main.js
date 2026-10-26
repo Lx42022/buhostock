@@ -17,7 +17,7 @@
       sendError: "No hemos podido enviarlo. Revisa tu conexión o escríbenos a ",
       mailOpened: "Se ha abierto tu programa de correo con tus datos. Envía el mensaje y te escribimos en menos de 48 horas (días laborables).",
       mailSubject: "Quiero probar BuhoStock", mailIntro: "Hola, quiero probar BuhoStock.",
-      labels: ["Nombre / tienda", "Correo", "Perfil de Wallapop", "Anuncios", "WhatsApp", "Novedades por correo", "Condiciones aceptadas", "versión"],
+      labels: ["Nombre / tienda", "Correo", "Perfil de Wallapop", "Anuncios", "WhatsApp", "Novedades por correo", "Condiciones aceptadas", "versión", "PC encendido de noche"],
     },
     en: {
       yourPlan: "Your plan: ", custom: "More than 1,000: we'll make you a custom price.",
@@ -26,7 +26,7 @@
       sendError: "We couldn't send it. Check your connection or write to us at ",
       mailOpened: "Your e-mail program has opened with your details. Send the message and we'll get back to you within 48 hours (working days).",
       mailSubject: "I want to try BuhoStock", mailIntro: "Hello, I want to try BuhoStock.",
-      labels: ["Name / shop", "E-mail", "Wallapop profile", "Listings", "WhatsApp", "News by e-mail", "Terms accepted", "version"],
+      labels: ["Name / shop", "E-mail", "Wallapop profile", "Listings", "WhatsApp", "News by e-mail", "Terms accepted", "version", "PC on at night"],
     },
     de: {
       yourPlan: "Dein Plan: ", custom: "Mehr als 1.000: Wir machen dir einen individuellen Preis.",
@@ -35,7 +35,7 @@
       sendError: "Senden hat nicht geklappt. Prüfe deine Verbindung oder schreib uns an ",
       mailOpened: "Dein E-Mail-Programm hat sich mit deinen Daten geöffnet. Schick die Nachricht ab, wir melden uns innerhalb von 48 Stunden (Werktage).",
       mailSubject: "Ich möchte BuhoStock testen", mailIntro: "Hallo, ich möchte BuhoStock testen.",
-      labels: ["Name / Shop", "E-Mail", "Wallapop-Profil", "Anzeigen", "WhatsApp", "Neuigkeiten per E-Mail", "Bedingungen akzeptiert", "Version"],
+      labels: ["Name / Shop", "E-Mail", "Wallapop-Profil", "Anzeigen", "WhatsApp", "Neuigkeiten per E-Mail", "Bedingungen akzeptiert", "Version", "PC nachts an"],
     },
   };
   var lang = (document.documentElement.lang || "es").slice(0, 2);
@@ -123,10 +123,12 @@
     var profile = form.elements.perfil;
     var phone = form.elements.whatsapp;
     var terms = form.elements.condiciones;
+    var nightPc = form.elements.pc_noche;
 
     remember(name, name.value.trim().length >= 2);
     remember(email, /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim()));
     remember(profile, profile.value.trim().length >= 2);
+    remember(nightPc, /^(windows|mac|no)$/.test(nightPc.value));
     remember(phone, phone.value.trim() === "" || isValidSpanishPhone(phone.value));
     remember(terms, terms.checked);
     return firstInvalid;
@@ -139,6 +141,7 @@
       email: form.elements.email.value.trim(),
       perfil: form.elements.perfil.value.trim(),
       anuncios: form.elements.anuncios.value,
+      pc_noche: form.elements.pc_noche.value,     // windows | mac | no (required)
       whatsapp: form.elements.whatsapp.value.trim(),
       novedades: form.elements.novedades.checked ? "si" : "no",
       condiciones: form.elements.condiciones.checked ? "si" : "no",
@@ -160,6 +163,7 @@
       label[1] + ": " + data.email,
       label[2] + ": " + data.perfil,
       label[3] + ": " + (data.anuncios || "-"),
+      label[8] + ": " + data.pc_noche,
       label[4] + ": " + (data.whatsapp ? "+34 " + data.whatsapp : "-"),
       label[5] + ": " + data.novedades,
       label[6] + ": " + data.condiciones + " (" + label[7] + " " + data.condiciones_version + ", " + data.idioma + ")",

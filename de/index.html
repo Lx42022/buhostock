@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
+  <meta name="robots" content="noindex">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>BuhoStock · Deine Wallapop-Anzeigen jede Nacht wieder oben</title>
   <meta name="description" content="BuhoStock stellt deine Wallapop-Anzeigen jede Nacht neu ein, senkt den Preis von Ladenhütern Schritt für Schritt bis zu deinem Mindestpreis und schickt dir jeden Morgen einen Bericht. 30 Tage gratis, ohne Bindung.">
@@ -10,10 +11,6 @@
   <meta property="og:title" content="BuhoStock · Während du schläfst, landen deine Anzeigen wieder oben">
   <meta property="og:description" content="Stellt deine Anzeigen jede Nacht neu ein, passt Preise an, ohne unter deinen Mindestpreis zu gehen, und schickt dir morgens den Bericht. 30 Tage gratis.">
   <meta property="og:locale" content="de_DE">
-  <link rel="alternate" hreflang="es" href="https://lx42022.github.io/buhostock/">
-  <link rel="alternate" hreflang="en" href="https://lx42022.github.io/buhostock/en/">
-  <link rel="alternate" hreflang="de" href="https://lx42022.github.io/buhostock/de/">
-  <link rel="alternate" hreflang="x-default" href="https://lx42022.github.io/buhostock/">
   <link rel="icon" href="../assets/buho-icon.svg" type="image/svg+xml">
   <link rel="preload" href="../assets/fonts/schibsted-grotesk-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/styles.css">
@@ -35,7 +32,7 @@
         <a href="#precios">Preise</a>
         <a href="#preguntas">Fragen</a>
       </nav>
-      <div class="header-actions"><nav class="lang" aria-label="Sprache"><a href="../index.html" hreflang="es" lang="es">ES</a><a href="../en/index.html" hreflang="en" lang="en">EN</a><a href="index.html" hreflang="de" lang="de" aria-current="true">DE</a></nav><a class="btn btn-primary btn-small" href="#alta">Gratis testen</a></div>
+      <div class="header-actions"><a class="btn btn-primary btn-small" href="#alta">Gratis testen</a></div>
     </div>
   </header>
 
@@ -83,6 +80,7 @@
         <div class="stat"><b>22 → 49</b><span>Verkäufe pro Monat, seit wir es nutzen</span></div>
       </div>
       <p class="stats-source">Unsere 2 Elektronik-Konten, April–Oktober 2026 (sonntags Pause; automatisches Neu-Einstellen seit September; Verkäufe Dez–Mär gegenüber Mai–Jun). Zusammenhang, keine Garantie.</p>
+      <p class="stats-source"><strong>Über 800 Stunden Handarbeit gespart: rund 100 volle Arbeitstage.</strong> (Berechnung: 1 Minute pro Preisänderung und 10 Minuten pro neu eingestellter Anzeige, seit dem 31. März 2026.)</p>
     </section>
 
     <!-- ONE NIGHT -->
@@ -235,6 +233,16 @@
                 <option value="401-1000">401 bis 1.000</option>
                 <option value="mas de 1000">Mehr als 1.000</option>
               </select>
+            </div>
+            <div class="field">
+              <label for="f-pc-noche">Hast du nachts einen eingeschalteten Windows-PC?</label>
+              <select id="f-pc-noche" name="pc_noche" required>
+                <option value="">Bitte wählen</option>
+                <option value="windows">Ja, Windows</option>
+                <option value="mac">Ich habe einen Mac</option>
+                <option value="no">Ich habe nachts keinen eingeschalteten PC</option>
+              </select>
+              <span class="error">Bitte wähle eine der Optionen.</span>
             </div>
             <div class="field">
               <label for="f-whatsapp">WhatsApp <span class="opt">(optional)</span></label>
